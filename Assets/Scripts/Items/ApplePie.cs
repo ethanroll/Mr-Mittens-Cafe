@@ -12,7 +12,7 @@ public class ApplePie : MonoBehaviour, IInteractable
     {
         Debug.Log("Picked up the Apple Pie");
 
-        Inventory.Instance.Add(new Item { itemName = "Apple Pie", type = ItemType.Pastry, quantity = 1 });
+        //Inventory.Instance.Add(new Item { itemName = "Apple Pie", type = ItemType.Pastry, quantity = 1 });
 
     }
 }

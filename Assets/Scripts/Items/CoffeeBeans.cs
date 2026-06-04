@@ -10,14 +10,10 @@ public class CoffeeMachine : MonoBehaviour, IInteractable
     }
     
     public void Interact()
-    {
-        
+    {   
         Debug.Log("Interacted with Coffee");
-        //Item item  = GetComponent<Item>();
-
-        //itemName = item.itemName;
  
-        Inventory.Instance.Add(new Item { itemName = "Coffee", type = ItemType.Coffee, quantity = 1 });
+       // Inventory.Instance.Add(new Item { itemName = "Coffee", type = ItemType.Coffee, quantity = 1 });
         
     }
 }

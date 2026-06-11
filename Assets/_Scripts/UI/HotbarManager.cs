@@ -16,7 +16,6 @@ public class HotbarManager : MonoBehaviour
                              Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0 }; // store keypressed to corresponding hotbar slot
     int activeSlot = 0;
     
-
     private bool isArrayFull = false;
 
     public void Awake()
@@ -83,7 +82,7 @@ public class HotbarManager : MonoBehaviour
     }
 
     // add Item to hotbar
-    public bool AddToHotbar(Item item)
+    public void AddToHotbar(Item item)
     {
         for(int i = 0; i < hotbar.Length; i++)  // check if array is full
         {
@@ -92,10 +91,14 @@ public class HotbarManager : MonoBehaviour
                 hotbar[i] = item;
 
                 hotbarPanel.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = item.icon; // get icon of individual item & place on top of icon
-                return isArrayFull;
             }
         }
         isArrayFull = true;
+    }
+
+    // return value of isArrayFull
+    public bool IsArrayFull()
+    {
         return isArrayFull;
     }
 }

@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour
     // add items to list
     public void Add(Item item)
     {
-        if (HotbarManager.Instance.AddToHotbar(item) == false) // if false add item to list
+        if (!HotbarManager.Instance.IsArrayFull()) // if false add item to list
         {
             Debug.Log("added item to actual list");
             items.Add(item);

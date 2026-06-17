@@ -43,6 +43,7 @@ public class InteractionPromptManager : MonoBehaviour
             promptWindow.SetActive(true);
             promptWindow.GetComponentInChildren<TMP_Text>().text = interactionPrompt;
 
+            responseWindowParent.SetActive(true);
             interactionResponse = prompts[currentPromptIndex].responses;
             for (int i = 0; i < interactionResponse.Length; i++)    // loop through each response and show with UI
             {

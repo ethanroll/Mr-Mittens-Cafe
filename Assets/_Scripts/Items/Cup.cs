@@ -12,11 +12,10 @@ public class Cup : MonoBehaviour, IInteractable
     private Drink currentDrink;
 
     // start populating promptdata list
-    public void Start()
-    {
-        InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage1, responses = responses1 });
-        InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage2, responses = responses2 });
-    }
+    //public void Start()
+    //{
+        
+    //}
 
     public bool CanInteract()
     {
@@ -28,7 +27,10 @@ public class Cup : MonoBehaviour, IInteractable
     {
         if (!HotbarManager.Instance.IsArrayFull())
         {
+            InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage1, responses = responses1 });
+            InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage2, responses = responses2 });
             currentDrink = new Drink();
+            currentDrink.icon = cupIcon;
             InteractionPromptManager.Instance.LoadPrompt(this);          
         }
     }
@@ -49,6 +51,7 @@ public class Cup : MonoBehaviour, IInteractable
     // add drink when all prompts are done
     public void PromptComplete()
     {
-        Inventory.Instance.Add(currentDrink);
+        HotbarManager.Instance.AddToHotbar(currentDrink);
+        Inventory.Instance.Add(currentDrink);      
     }
 }

@@ -1,26 +1,24 @@
-
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-
 public class HotbarManager : MonoBehaviour
 {
     public static HotbarManager Instance;
-    public GameObject hotbarPanel;
-    public GameObject slotIcon;
-    [SerializeField] private GameObject hotbarSlotPrefab;
-    public Item currentHotbarSlot = null;
 
     private Item[] hotbar = new Item[10]; // keys 0-10
     Key[] hotbarKeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6,
                              Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0 }; // store keypressed to corresponding hotbar slot
-    int activeSlot = 0;
 
-    //[SerializeField] private bool isArrayFull = false;
-    [SerializeField] int hotbarLength = 0;
-   // private bool isFinalSlotFull = false;  // store if final slot is full or not
+    public GameObject hotbarPanel;
+    public GameObject slotIcon;
+    [SerializeField] private GameObject hotbarSlotPrefab;
+
+    private int activeSlot = 0;
+    private int hotbarLength = 0;
+    private Item currentHotbarSlot = null;
+
 
     public void Awake()
     {
@@ -31,7 +29,9 @@ public class HotbarManager : MonoBehaviour
     {
         for(int i = 0; i < 10; i++)
         {
-            Instantiate(hotbarSlotPrefab, hotbarPanel.transform);   // instantiate 10 slots at start
+            GameObject slot = Instantiate(hotbarSlotPrefab, hotbarPanel.transform);  // instantiate 10 slots at start
+            Image icon = slot.transform.GetChild(0).GetComponent<Image>();
+            icon.enabled = false; // hide the empty icon so it doesn't block the highlight color
         }
     }
 
@@ -101,19 +101,30 @@ public class HotbarManager : MonoBehaviour
         {
             if(hotbar[i] == null)               // place item in array if the index is null
             {
-               // isFinalSlotFull = false;
                 hotbar[i] = item;
 
                 Debug.Log("add to hotbar method called");
-                hotbarPanel.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = item.icon; // get icon of individual item & place on top of icon\
+                Image icon = hotbarPanel.transform.GetChild(i).GetChild(0).GetComponent<Image>();
+                icon.sprite = item.icon;
+                icon.enabled = true;
                 break;
             }
-            //else
-            //{
-              //  isFinalSlotFull = true;
-            //}
         }
     }
+
+
+    // remove Item from hotbar
+    public void RemoveFromHotbar()
+    {
+        hotbar[activeSlot] = null;
+        currentHotbarSlot = null;
+
+        Image icon = hotbarPanel.transform.GetChild(activeSlot).GetChild(0).GetComponent<Image>();
+        icon.sprite = null;
+        icon.enabled = false; // hides it so an empty slot doesn't show a blank white box
+        Debug.Log("removed item from hotbar");
+    }
+
 
     // return value of isArrayFull
     public bool IsArrayFull()

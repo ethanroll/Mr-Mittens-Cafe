@@ -33,7 +33,7 @@ public class InteractionPromptManager : MonoBehaviour
     }
 
     // go through prompt system
-    public void LoadPrompt(IInteractable interactable)
+    public void LoadPrompt(IPromptable interactable)
     {
         if (currentPromptIndex != prompts.Count)
         {

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
@@ -10,6 +10,7 @@ public class Inventory : MonoBehaviour
     {
         Instance = this;
     }
+
 
     // add items to list
     public void Add(Item item)
@@ -24,7 +25,18 @@ public class Inventory : MonoBehaviour
             Debug.Log("Can't add anymore items");
         }
     }
-    
+
+
+    // remove currently selected item from inventory
+    public void Remove()
+    {
+        Item item = HotbarManager.Instance.UserCurrentHotbarSlot();
+        items.Remove(item);
+        Debug.Log("removed item from actual list");
+        HotbarManager.Instance.RemoveFromHotbar();      // remove item from hotbar
+    }
+
+
     // print entire current list
     public void PrintList()
     {
@@ -50,10 +62,4 @@ public class Inventory : MonoBehaviour
             Debug.Log(output);
         }
     }
-
-    // remove items
-    //public void Remove()
-    //{
-        
-   // }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Cup : MonoBehaviour, IInteractable
+public class Cup : MonoBehaviour, IInteractable, IPromptable
 {
     [SerializeField] private Sprite cupIcon;    // have to change icon for different sizes/type
     private string promptMessage1 = "Would you like an cup for iced drinks or hot drinks?";

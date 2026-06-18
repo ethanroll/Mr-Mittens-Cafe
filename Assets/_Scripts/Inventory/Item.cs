@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Item
 {
-    public string itemName;
+    public string itemName; // ADD LATER FOR HOTBAR NAME 
     //public ItemType itemType;
     //public int quantity; // might not need qty
     public Sprite icon;

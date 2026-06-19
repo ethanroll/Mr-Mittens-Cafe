@@ -10,5 +10,6 @@ public class TrashCan : MonoBehaviour, IInteractable
     public void Interact()
     {
         Inventory.Instance.Remove();
+        ToastManager.Instance.DisplayMessage("Threw your item away!");
     }
 }

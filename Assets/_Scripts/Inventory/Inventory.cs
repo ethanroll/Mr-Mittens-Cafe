@@ -17,12 +17,9 @@ public class Inventory : MonoBehaviour
     {
         if (!HotbarManager.Instance.IsArrayFull()) // if false add item to list
         {
-            Debug.Log("added item to actual list");
+            //Debug.Log("added item to actual list");
             items.Add(item);
             PrintList();
-        }
-        else {
-            Debug.Log("Can't add anymore items");
         }
     }
 
@@ -30,10 +27,13 @@ public class Inventory : MonoBehaviour
     // remove currently selected item from inventory
     public void Remove()
     {
-        Item item = HotbarManager.Instance.UserCurrentHotbarSlot();
-        items.Remove(item);
-        Debug.Log("removed item from actual list");
-        HotbarManager.Instance.RemoveFromHotbar();      // remove item from hotbar
+        if (HotbarManager.Instance.UserCurrentHotbarSlot() != null)
+        {
+            Item item = HotbarManager.Instance.UserCurrentHotbarSlot();
+            items.Remove(item);
+            Debug.Log("removed item from actual list");
+            HotbarManager.Instance.RemoveFromHotbar();      // remove item from hotbar
+        }
     }
 
 

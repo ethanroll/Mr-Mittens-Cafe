@@ -19,7 +19,6 @@ public class HotbarManager : MonoBehaviour
     private int hotbarLength = 0;
     private Item currentHotbarSlot = null;
 
-
     public void Awake()
     {
         Instance = this;
@@ -49,7 +48,7 @@ public class HotbarManager : MonoBehaviour
                 activeSlot = i;
                 hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.yellow; // add highlighted slot
 
-                UserCurrentHotbarSlot();
+                UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
 
                 if (currentHotbarSlot != null)
                     printCurrentSlot(currentHotbarSlot);
@@ -122,7 +121,7 @@ public class HotbarManager : MonoBehaviour
         Image icon = hotbarPanel.transform.GetChild(activeSlot).GetChild(0).GetComponent<Image>();
         icon.sprite = null;
         icon.enabled = false; // hides it so an empty slot doesn't show a blank white box
-        Debug.Log("removed item from hotbar");
+        ToastManager.Instance.DisplayMessage("removed item from hotbar");
     }
 
 

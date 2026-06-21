@@ -11,12 +11,6 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
 
     private Drink currentDrink;
 
-    // start populating promptdata list
-    //public void Start()
-    //{
-        
-    //}
-
     public bool CanInteract()
     {
         return true;
@@ -32,6 +26,10 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
             currentDrink = new Drink();
             currentDrink.icon = cupIcon;
             InteractionPromptManager.Instance.LoadPrompt(this);          
+        }
+        else
+        {
+            ToastManager.Instance.DisplayMessage("Can't add anymore items");
         }
     }
 

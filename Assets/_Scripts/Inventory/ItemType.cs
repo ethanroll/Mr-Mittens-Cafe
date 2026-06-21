@@ -7,6 +7,6 @@ public enum Temperature { Hot, Iced }
 public enum IceLevel { Quarter, Half, Regular }
 public enum MilkType { Whole, Skim, Oat, Almond, Soy, Coconut }
 
-public enum PastryType { Crossiant, Cupcake, CakePop }
+public enum PastryType { Crossiant, Cupcake, CakePop, ApplePie }
 public enum SavoryType { Sandwich, Burrito, Panini }
 

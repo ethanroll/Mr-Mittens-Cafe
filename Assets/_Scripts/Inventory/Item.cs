@@ -17,6 +17,8 @@ public class Drink: Item
     public int? numEspressoShots;
     public IceLevel? iceLevel;
     public MilkType? milkType;
+
+    public bool hasIce;
 }
 
 public class Food: Item

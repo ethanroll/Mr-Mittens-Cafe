@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,6 +19,7 @@ public class HotbarManager : MonoBehaviour
     private int activeSlot = 0;
     private int hotbarLength = 0;
     private Item currentHotbarSlot = null;
+    public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
 
     public void Awake()
     {
@@ -41,20 +43,24 @@ public class HotbarManager : MonoBehaviour
         {
             if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame)        // update current slot
             {
+                pressedOnce = true;
                 for (int j = 0; j < hotbarKeys.Length; j++)
                 {
                     hotbarPanel.transform.GetChild(j).GetComponent<Image>().color = Color.white; // reset all icons to unhighlight
                 }
+
                 activeSlot = i;
                 hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.yellow; // add highlighted slot
 
                 UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
 
                 if (currentHotbarSlot != null)
+                    GetCurrentItemName(currentHotbarSlot);
                     printCurrentSlot(currentHotbarSlot);
             }
         }
     }
+
 
     // returns the current hotbar slot
     public Item UserCurrentHotbarSlot()
@@ -63,7 +69,25 @@ public class HotbarManager : MonoBehaviour
         return currentHotbarSlot;
     }
 
-    // print current hotbar slot
+
+
+    // print current item name
+    public void GetCurrentItemName(Item item)
+    {
+        string output = item.itemName;
+
+        if(item is Drink drink)
+        {
+            if (drink.cupSize != null) output += drink.cupSize + " cup";
+            if (drink.iceLevel != null) output += " with " + drink.iceLevel + " ice";
+
+            // finish for food
+        }
+        ToastManager.Instance.DisplayMessage(output);
+    }
+
+
+    // print current hotbar slot for debugging
     public void printCurrentSlot(Item item)
     {
         if (item == null)

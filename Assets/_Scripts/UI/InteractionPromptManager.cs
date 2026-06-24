@@ -38,6 +38,7 @@ public class InteractionPromptManager : MonoBehaviour
         if (currentPromptIndex != prompts.Count)
         {
             removeWindowParentChild();  // remove previous instances of responses
+            HotbarManager.Instance.hotbarPanel.SetActive(false);    // temporarily remove hotbar
 
             interactionPrompt = prompts[currentPromptIndex].promptText;
             promptWindow.SetActive(true);
@@ -62,12 +63,18 @@ public class InteractionPromptManager : MonoBehaviour
         }
         else
         {
-            // add drink when prompts are done
-            interactable.PromptComplete();
+            // check if adding a drink for the first time at current hotbar slot
+            if (interactable is Cup cup)
+            {
+                cup.PromptComplete();
+            }
 
             // reset values
             currentPromptIndex = 0;
             prompts.Clear();
+
+            // put back hotbar
+            HotbarManager.Instance.hotbarPanel.SetActive(true);
 
             //remove UI
             promptWindow.SetActive(false);

@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour
     // remove currently selected item from inventory
     public void Remove()
     {
-        if (HotbarManager.Instance.UserCurrentHotbarSlot() != null)
+        if (HotbarManager.Instance.UserCurrentHotbarSlot() != null && HotbarManager.Instance.pressedOnce)
         {
             Item item = HotbarManager.Instance.UserCurrentHotbarSlot();
             items.Remove(item);
@@ -35,7 +35,6 @@ public class Inventory : MonoBehaviour
             HotbarManager.Instance.RemoveFromHotbar();      // remove item from hotbar
         }
     }
-
 
     // print entire current list
     public void PrintList()

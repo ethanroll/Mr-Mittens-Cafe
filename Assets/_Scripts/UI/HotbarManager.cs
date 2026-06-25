@@ -17,7 +17,7 @@ public class HotbarManager : MonoBehaviour
     [SerializeField] private GameObject hotbarSlotPrefab;
 
     private int activeSlot = 0;
-    private int hotbarLength = 0;
+    //private int hotbarLength = 0;
     private Item currentHotbarSlot = null;
     public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
 
@@ -83,7 +83,7 @@ public class HotbarManager : MonoBehaviour
 
             // finish for food
         }
-        ToastManager.Instance.DisplayMessage(output);
+        ToastManager.Instance.DisplayEquippedItem(output);
     }
 
 
@@ -145,7 +145,7 @@ public class HotbarManager : MonoBehaviour
         Image icon = hotbarPanel.transform.GetChild(activeSlot).GetChild(0).GetComponent<Image>();
         icon.sprite = null;
         icon.enabled = false; // hides it so an empty slot doesn't show a blank white box
-        ToastManager.Instance.DisplayMessage("removed item from hotbar");
+        ToastManager.Instance.DisplayInteraction("removed item from hotbar");
     }
 
 

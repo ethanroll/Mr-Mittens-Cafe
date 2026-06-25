@@ -14,7 +14,7 @@ public class Drink: Item
     public CupSize? cupSize;
     public DrinkType? drinkType;
     public Temperature? temperature;
-    public int? numEspressoShots;
+    public int numEspressoShots = 0;
     public IceLevel? iceLevel;
     public MilkType? milkType;
 

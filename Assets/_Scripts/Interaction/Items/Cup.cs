@@ -8,6 +8,7 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
 
     private string[] responses1 = new string[] { "Hot", "Iced" };
     private string[] responses2 = new string[] { "Small", "Medium", "Large", "XLarge" };
+    public bool promptFinished = false;
 
     private Drink currentDrink;
 
@@ -25,12 +26,22 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
             InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage2, responses = responses2 });
             currentDrink = new Drink();
             currentDrink.icon = cupIcon;
+
+            promptFinished = false;
             InteractionPromptManager.Instance.LoadPrompt(this);          
         }
         else
         {
-            ToastManager.Instance.DisplayMessage("Can't add anymore items");
+            ToastManager.Instance.DisplayInteraction("Can't add anymore items");
         }
+    }
+
+    // add drink when all prompts are done
+    public void PromptFinished()
+    {
+        promptFinished = true;
+        HotbarManager.Instance.AddToHotbar(currentDrink);
+        Inventory.Instance.Add(currentDrink);
     }
 
     // check responses of user input
@@ -44,12 +55,5 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
             case "Large": currentDrink.cupSize = CupSize.Large; break;
             case "XLarge": currentDrink.cupSize = CupSize.XLarge; break;
         }
-    }
-
-    // add drink when all prompts are done
-    public void PromptComplete()
-    {
-        HotbarManager.Instance.AddToHotbar(currentDrink);
-        Inventory.Instance.Add(currentDrink);      
     }
 }

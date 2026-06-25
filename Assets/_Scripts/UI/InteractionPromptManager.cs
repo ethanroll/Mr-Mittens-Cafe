@@ -63,11 +63,8 @@ public class InteractionPromptManager : MonoBehaviour
         }
         else
         {
-            // check if adding a drink for the first time at current hotbar slot
-            if (interactable is Cup cup)
-            {
-                cup.PromptComplete();
-            }
+            // prompt is finished
+            interactable.PromptFinished();  
 
             // reset values
             currentPromptIndex = 0;

@@ -13,7 +13,7 @@ public class ApplePie : MonoBehaviour, IInteractable
     public void Interact()
     {
         if (!HotbarManager.Instance.IsArrayFull()) {
-            ToastManager.Instance.DisplayMessage("You grabbed an Apple Pie");
+            ToastManager.Instance.DisplayInteraction("You grabbed an Apple Pie");
 
             Food applePie = new Food();
 
@@ -26,7 +26,7 @@ public class ApplePie : MonoBehaviour, IInteractable
         }
         else
         {
-            ToastManager.Instance.DisplayMessage("Can't add anymore items");
+            ToastManager.Instance.DisplayInteraction("Can't add anymore items");
         }
     }
 }

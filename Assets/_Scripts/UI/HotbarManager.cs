@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,9 +16,9 @@ public class HotbarManager : MonoBehaviour
     [SerializeField] private GameObject hotbarSlotPrefab;
 
     private int activeSlot = 0;
-    //private int hotbarLength = 0;
     private Item currentHotbarSlot = null;
     public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
+    public bool drinkIsBusy = false; // store value for if drink is in a process
 
     public void Awake()
     {
@@ -41,7 +40,7 @@ public class HotbarManager : MonoBehaviour
     {
         for (int i = 0; i < hotbarKeys.Length; i++)
         {
-            if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame)        // update current slot
+            if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame && !drinkIsBusy)        // update current slot, can't switch if drink is busy
             {
                 pressedOnce = true;
                 for (int j = 0; j < hotbarKeys.Length; j++)
@@ -56,7 +55,11 @@ public class HotbarManager : MonoBehaviour
 
                 if (currentHotbarSlot != null)
                     GetCurrentItemName(currentHotbarSlot);
-                    printCurrentSlot(currentHotbarSlot);
+                    //printCurrentSlot(currentHotbarSlot);
+            }
+            else if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame && drinkIsBusy)
+            {
+                ToastManager.Instance.DisplayEquippedItem("Cannot switch items at the moment.");
             }
         }
     }
@@ -69,8 +72,6 @@ public class HotbarManager : MonoBehaviour
         return currentHotbarSlot;
     }
 
-
-
     // print current item name
     public void GetCurrentItemName(Item item)
     {
@@ -80,6 +81,8 @@ public class HotbarManager : MonoBehaviour
         {
             if (drink.cupSize != null) output += drink.cupSize + " cup";
             if (drink.iceLevel != null) output += " with " + drink.iceLevel + " ice";
+            if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
+            if (drink.milkType != null) output += " with " + drink.milkType + " milk";
 
             // finish for food
         }
@@ -103,7 +106,7 @@ public class HotbarManager : MonoBehaviour
             if (drink.cupSize != null) output += ", " + drink.cupSize;
             if (drink.drinkType != null) output += ", " + drink.drinkType;
             if (drink.temperature != null) output += ", " + drink.temperature;
-            if (drink.numEspressoShots != null) output += ", " + drink.numEspressoShots;
+            if (drink.numEspressoShots != 0) output += ", " + drink.numEspressoShots;
             if (drink.iceLevel != null) output += ", " + drink.iceLevel;
             if (drink.milkType != null) output += ", " + drink.milkType;
         }

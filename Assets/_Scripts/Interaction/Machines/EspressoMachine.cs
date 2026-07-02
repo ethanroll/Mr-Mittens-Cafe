@@ -12,7 +12,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     private Drink currentDrink; // store drink at current hotbar slot
 
     private int responsesNewLength; // store length of array when already have espresso
-    private bool isBrewing; // check if machine is already in use 
 
     public bool CanInteract()
     {
@@ -23,7 +22,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.pressedOnce && !isBrewing)
+        if (currentItem is Drink drink && HotbarManager.Instance.pressedOnce && !HotbarManager.Instance.drinkIsBusy)
         {
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {
@@ -88,11 +87,12 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     private IEnumerator BrewEspresso()
     {
         // FIX LATER SINCE DATA IS ALREADY ADDED BEFORE BREWING IE IF PLAAYER WALKS AWAY OR CANCELS ETC
-        isBrewing = true;
+        HotbarManager.Instance.drinkIsBusy = true;
+
         ToastManager.Instance.DisplayInteraction("Starting the brewing process");
         yield return new WaitForSeconds(4f);
-
         ToastManager.Instance.DisplayInteraction("Finished brewing");
-        isBrewing = false;
+
+        HotbarManager.Instance.drinkIsBusy = false;
     }
 }

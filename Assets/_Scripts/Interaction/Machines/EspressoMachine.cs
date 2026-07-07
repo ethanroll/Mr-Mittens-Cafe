@@ -22,7 +22,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.pressedOnce && !HotbarManager.Instance.drinkIsBusy)
+        if (currentItem is Drink drink && HotbarManager.Instance.UserCurrentHotbarSlot() != null && !HotbarManager.Instance.drinkIsBusy)
         {
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {

@@ -15,10 +15,13 @@ public class HotbarManager : MonoBehaviour
     public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;
 
-    private int activeSlot = 0;
+    private int? activeSlot;
     private Item currentHotbarSlot = null;
     public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
     public bool drinkIsBusy = false; // store value for if drink is in a process
+    private bool canPressAgain = false;
+
+
 
     public void Awake()
     {
@@ -43,15 +46,32 @@ public class HotbarManager : MonoBehaviour
             if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame && !drinkIsBusy)        // update current slot, can't switch if drink is busy
             {
                 pressedOnce = true;
+
                 for (int j = 0; j < hotbarKeys.Length; j++)
                 {
                     hotbarPanel.transform.GetChild(j).GetComponent<Image>().color = Color.white; // reset all icons to unhighlight
                 }
 
-                activeSlot = i;
-                hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.yellow; // add highlighted slot
+                // if key is prressed again, deselect any items
+                if (i == activeSlot && canPressAgain)
+                {
+                    hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.white;
+                    currentHotbarSlot = null;
+                    canPressAgain = false;
 
-                UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
+                    UserCurrentHotbarSlot();
+                }
+                else
+                {
+                    canPressAgain = true;
+                    activeSlot = i;
+                    hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.yellow; // add highlighted slot
+
+                    UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
+                }
+
+                Debug.Log(hotbar[activeSlot]);
+                Debug.Log(currentHotbarSlot);
 
                 if (currentHotbarSlot != null)
                     GetCurrentItemName(currentHotbarSlot);
@@ -79,6 +99,7 @@ public class HotbarManager : MonoBehaviour
 
         if(item is Drink drink)
         {
+            if (drink.temperature != null) output += drink.temperature + " ";
             if (drink.cupSize != null) output += drink.cupSize + " cup";
             if (drink.iceLevel != null) output += " with " + drink.iceLevel + " ice";
             if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";

@@ -18,6 +18,7 @@ public class Drink: Item
     public IceLevel? iceLevel;
     public MilkType? milkType;
 
+    // might get rid of bools later!!!!!!!!!!!!!!!
     public bool hasIce;
     public bool hasMilk;
 }

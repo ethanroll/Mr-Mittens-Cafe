@@ -18,7 +18,7 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable
     {
         // need to fix: will start when have drink but not selected
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.pressedOnce)
+        if (currentItem is Drink drink && HotbarManager.Instance.UserCurrentHotbarSlot() != null)
         {
             if (!drink.hasIce)  // check if drink has ice already
             {

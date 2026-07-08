@@ -6,7 +6,6 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable
     private string promptMessage = "How much ice would you like to fill the cup?";
     private string[] responses = new string[] { "Quarter", "Half", "Regular" };
     private Drink currentDrink; // store drink at current hotbar slot
-    public bool promptFinished = false;
 
     public bool CanInteract()
     {
@@ -18,18 +17,14 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable
     {
         // need to fix: will start when have drink but not selected
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.UserCurrentHotbarSlot() != null)
+        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot)
         {
-            if (!drink.hasIce)  // check if drink has ice already
+            if (drink.iceLevel == null)  // check if drink has ice already
             {
                 currentDrink = drink; // store reference for CheckResponse to use
 
-                promptFinished = false;
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
-                InteractionPromptManager.Instance.LoadPrompt(this);
-
-                // FIX BECAUSE IS TRUE EVEN BEFORE PROMPT IS ANSWERED MAYBE MOVE TO CHECKRESPONSE
-                drink.hasIce = true;   
+                InteractionPromptManager.Instance.LoadPrompt(this); 
             }
             else
             {
@@ -44,7 +39,8 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable
 
     public void PromptFinished()
     {
-        promptFinished = true;
+        ToastManager.Instance.DisplayInteraction("Added ice to cup.");
+        HotbarManager.Instance.GetCurrentItemName(currentDrink);
     }
 
     public void CheckResponse(string capturedResponse)

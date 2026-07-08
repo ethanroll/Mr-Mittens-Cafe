@@ -7,7 +7,6 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
     private string promptMessage = "Which type of milk would you like to add?";
     private string[] responses = new string[] { "Whole", "Skim", "Oat", "Almond", "Soy", "Coconut" };
 
-    public bool promptFinished = false;
     private Drink currentDrink; // store drink at current hotbar slot
 
     public bool CanInteract()
@@ -19,17 +18,14 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.UserCurrentHotbarSlot() != null && !HotbarManager.Instance.drinkIsBusy)
+        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy)
         {
-            if (!drink.hasMilk)
+            if (drink.milkType == null)
             {
                 currentDrink = drink; // store reference for CheckResponse to use
 
-                promptFinished = false;
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
                 InteractionPromptManager.Instance.LoadPrompt(this);
-
-                drink.hasMilk = true;
             }
             else
             {
@@ -44,7 +40,6 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
 
     public void PromptFinished()
     {
-        promptFinished = true;
         StartCoroutine(DispenseMilk());
     }
 
@@ -70,6 +65,7 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
         ToastManager.Instance.DisplayInteraction("Pouring the milk");
         yield return new WaitForSeconds(4f);
         ToastManager.Instance.DisplayInteraction("Milk poured");
+        HotbarManager.Instance.GetCurrentItemName(currentDrink);
 
         HotbarManager.Instance.drinkIsBusy = false;
     }

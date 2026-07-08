@@ -8,7 +8,6 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
 
     private string[] responses1 = new string[] { "Hot", "Iced" };
     private string[] responses2 = new string[] { "Small", "Medium", "Large", "XLarge" };
-    public bool promptFinished = false;
 
     private Drink currentDrink;
 
@@ -27,7 +26,6 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
             currentDrink = new Drink();
             currentDrink.icon = cupIcon;
 
-            promptFinished = false;
             InteractionPromptManager.Instance.LoadPrompt(this);          
         }
         else
@@ -39,7 +37,6 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
     // add drink when all prompts are done
     public void PromptFinished()
     {
-        promptFinished = true;
         HotbarManager.Instance.AddToHotbar(currentDrink);
         Inventory.Instance.Add(currentDrink);
     }

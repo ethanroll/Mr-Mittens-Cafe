@@ -15,11 +15,12 @@ public class HotbarManager : MonoBehaviour
     public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;
 
-    private int? activeSlot;
+    private int activeSlot = -1;
     private Item currentHotbarSlot = null;
     public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
     public bool drinkIsBusy = false; // store value for if drink is in a process
     private bool canPressAgain = false;
+    public bool hasSlot = false; // store if activeSlot > -1
 
 
 
@@ -56,22 +57,27 @@ public class HotbarManager : MonoBehaviour
                 if (i == activeSlot && canPressAgain)
                 {
                     hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.white;
-                    currentHotbarSlot = null;
+                    activeSlot = -1;
                     canPressAgain = false;
-
-                    UserCurrentHotbarSlot();
+                    hasSlot = false;
+                    currentHotbarSlot = null;
                 }
                 else
                 {
                     canPressAgain = true;
                     activeSlot = i;
+
+                    // check if input corresponds to a hotbar slot
+                    if (activeSlot >= 0)
+                        hasSlot = true;
+                    else
+                        hasSlot = false;
+
                     hotbarPanel.transform.GetChild(i).GetComponent<Image>().color = Color.yellow; // add highlighted slot
 
-                    UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
+                    if(hasSlot)
+                        UserCurrentHotbarSlot();        // updates currentHotbarSlot to match the new activeSlot
                 }
-
-                Debug.Log(hotbar[activeSlot]);
-                Debug.Log(currentHotbarSlot);
 
                 if (currentHotbarSlot != null)
                     GetCurrentItemName(currentHotbarSlot);
@@ -88,58 +94,69 @@ public class HotbarManager : MonoBehaviour
     // returns the current hotbar slot
     public Item UserCurrentHotbarSlot()
     {
+        if(!hasSlot)
+            return null;
+
         currentHotbarSlot = hotbar[activeSlot];
         return currentHotbarSlot;
     }
 
+
     // print current item name
-    public void GetCurrentItemName(Item item)
+    public string GetCurrentItemName(Item item)
     {
         string output = item.itemName;
 
-        if(item is Drink drink)
+        if (item is Drink drink)
+        {
+            if (drink.cupSize == null)
+                return "Empty slot";
+            if (drink.temperature == Temperature.Iced)
+                output += "Iced ";
+
+            // Espresso
+            if (drink.milkType == null && drink.numEspressoShots == 2 && !drink.hasWater)
+            {
+                drink.drinkType = DrinkType.Espresso;
+                output += $"{drink.cupSize} {drink.drinkType}";
+            }
+            // Americano
+            else if(drink.milkType == null && (drink.numEspressoShots == 1 || drink.numEspressoShots ==2) && drink.hasWater)
+            {
+                drink.drinkType = DrinkType.Americano;
+                output += $"{drink.cupSize} {drink.drinkType}";
+            }
+            else
+            {
+                return DefaultItemPrint(drink);
+            }
+
+            
+        }
+        ToastManager.Instance.DisplayEquippedItem(output);
+        return output;
+    }
+
+
+
+    // print if drink is not a predetermined drink
+    private string DefaultItemPrint(Item item)
+    {
+        string output = item.itemName;
+
+        if (item is Drink drink)
         {
             if (drink.temperature != null) output += drink.temperature + " ";
             if (drink.cupSize != null) output += drink.cupSize + " cup";
             if (drink.iceLevel != null) output += " with " + drink.iceLevel + " ice";
             if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
             if (drink.milkType != null) output += " with " + drink.milkType + " milk";
-
-            // finish for food
+            if (drink.hasWater) output += " with water";
         }
         ToastManager.Instance.DisplayEquippedItem(output);
+        return output;     
     }
 
-
-    // print current hotbar slot for debugging
-    public void printCurrentSlot(Item item)
-    {
-        if (item == null)
-        {
-            Debug.Log("current slot is: empty");
-            return;
-        }
-
-        string output = item.itemName; // start of building string of list
-
-        if (item is Drink drink)
-        {
-            if (drink.cupSize != null) output += ", " + drink.cupSize;
-            if (drink.drinkType != null) output += ", " + drink.drinkType;
-            if (drink.temperature != null) output += ", " + drink.temperature;
-            if (drink.numEspressoShots != 0) output += ", " + drink.numEspressoShots;
-            if (drink.iceLevel != null) output += ", " + drink.iceLevel;
-            if (drink.milkType != null) output += ", " + drink.milkType;
-        }
-
-        if (item is Food food)
-        {
-            if (food.pastryType != null) output += ", " + food.pastryType;
-            if (food.flavor != null) output += ", " + food.flavor;
-            if (food.savoryType != null) output += ", " + food.savoryType;
-        }
-        Debug.Log("current slot is: " + output);
-    }
 
     // add Item to hotbar
     public void AddToHotbar(Item item)
@@ -163,13 +180,16 @@ public class HotbarManager : MonoBehaviour
     // remove Item from hotbar
     public void RemoveFromHotbar()
     {
-        hotbar[activeSlot] = null;
-        currentHotbarSlot = null;
+        if (hasSlot)
+        {
+            hotbar[activeSlot] = null;
+            currentHotbarSlot = null;
 
-        Image icon = hotbarPanel.transform.GetChild(activeSlot).GetChild(0).GetComponent<Image>();
-        icon.sprite = null;
-        icon.enabled = false; // hides it so an empty slot doesn't show a blank white box
-        ToastManager.Instance.DisplayInteraction("removed item from hotbar");
+            Image icon = hotbarPanel.transform.GetChild(activeSlot).GetChild(0).GetComponent<Image>();
+            icon.sprite = null;
+            icon.enabled = false; // hides it so an empty slot doesn't show a blank white box
+            ToastManager.Instance.DisplayInteraction("removed item from hotbar");
+        }
     }
 
 

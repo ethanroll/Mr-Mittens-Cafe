@@ -8,7 +8,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     private string promptMessage = "How many shots of espresso would you like to add";
     private string[] responses = new string[] { "One", "Two", "Three" };
 
-    public bool promptFinished = false;
     private Drink currentDrink; // store drink at current hotbar slot
 
     private int responsesNewLength; // store length of array when already have espresso
@@ -22,13 +21,12 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.UserCurrentHotbarSlot() != null && !HotbarManager.Instance.drinkIsBusy)
+        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy)
         {
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {
                 currentDrink = drink; // store reference for CheckResponse to use
 
-                promptFinished = false;
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
                 InteractionPromptManager.Instance.LoadPrompt(this);
             }
@@ -40,7 +38,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
                 string[] newResponses = new string[responsesNewLength];
                 Array.Copy(responses, newResponses, responsesNewLength);
 
-                promptFinished = false;
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = newResponses });
                 InteractionPromptManager.Instance.LoadPrompt(this);
             }
@@ -59,7 +56,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     // call brew espresso when prompt complete
     public void PromptFinished()
     {
-        promptFinished = true;
         StartCoroutine(BrewEspresso());
     }
 
@@ -92,6 +88,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
         ToastManager.Instance.DisplayInteraction("Starting the brewing process");
         yield return new WaitForSeconds(4f);
         ToastManager.Instance.DisplayInteraction("Finished brewing");
+        HotbarManager.Instance.GetCurrentItemName(currentDrink);
 
         HotbarManager.Instance.drinkIsBusy = false;
     }

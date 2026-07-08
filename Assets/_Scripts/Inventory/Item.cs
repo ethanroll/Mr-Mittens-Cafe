@@ -17,10 +17,7 @@ public class Drink: Item
     public int numEspressoShots = 0;
     public IceLevel? iceLevel;
     public MilkType? milkType;
-
-    // might get rid of bools later!!!!!!!!!!!!!!!
-    public bool hasIce;
-    public bool hasMilk;
+    public bool hasWater;
 }
 
 public class Food: Item

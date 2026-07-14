@@ -62,6 +62,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, IPromptable
     {
         // FIX LATER SINCE DATA IS ALREADY ADDED BEFORE BREWING IE IF PLAAYER WALKS AWAY OR CANCELS ETC
         HotbarManager.Instance.drinkIsBusy = true;
+        PlayerMovement.Instance.canMove = false;
 
         ToastManager.Instance.DisplayInteraction("Pouring water into the cup.");
         yield return new WaitForSeconds(4f);
@@ -69,5 +70,6 @@ public class WaterMachine : MonoBehaviour, IInteractable, IPromptable
         HotbarManager.Instance.GetCurrentItemName(currentDrink);
 
         HotbarManager.Instance.drinkIsBusy = false;
+        PlayerMovement.Instance.canMove = true;
     }
 }

@@ -84,6 +84,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     {
         // FIX LATER SINCE DATA IS ALREADY ADDED BEFORE BREWING IE IF PLAAYER WALKS AWAY OR CANCELS ETC
         HotbarManager.Instance.drinkIsBusy = true;
+        PlayerMovement.Instance.canMove = false;
 
         ToastManager.Instance.DisplayInteraction("Starting the brewing process");
         yield return new WaitForSeconds(4f);
@@ -91,5 +92,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
         HotbarManager.Instance.GetCurrentItemName(currentDrink);
 
         HotbarManager.Instance.drinkIsBusy = false;
+        PlayerMovement.Instance.canMove = true;
     }
 }

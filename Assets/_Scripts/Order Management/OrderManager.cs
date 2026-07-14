@@ -6,6 +6,7 @@ public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
     private List<Order> orders = new List<Order>();    // store all orders
+    private int milkOrWater;    // store whether milk or water liquid will be chosen
 
     public void Awake()
     {
@@ -22,6 +23,9 @@ public class OrderManager : MonoBehaviour
 
     public Drink GenerateRandomDrink(Drink drink)
     {
+        // chance for milk or water
+        milkOrWater = UnityEngine.Random.Range(0, 2);
+
         //drink.DrinkType = GetRandomEnumValue<DrinkType>();
         drink.cupSize = GetRandomEnumValue<CupSize>();
         drink.temperature = GetRandomEnumValue<Temperature>();
@@ -32,7 +36,10 @@ public class OrderManager : MonoBehaviour
             drink.iceLevel = GetRandomEnumValue<IceLevel>();
         }
 
-        drink.milkType = GetRandomEnumValue<MilkType>();
+        if (milkOrWater == 0)
+            drink.milkType = GetRandomEnumValue<MilkType>(); 
+        else
+            drink.hasWater = true;
 
         Debug.Log(drink);
         HotbarManager.Instance.GetCurrentItemName(drink);

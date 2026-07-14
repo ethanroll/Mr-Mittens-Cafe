@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.AI;
+using System.Collections;
 
 public class NPC : MonoBehaviour, IInteractable
 {
@@ -19,8 +19,9 @@ public class NPC : MonoBehaviour, IInteractable
         if (!orderGiven)
         {
             drink = new Drink();
+
+            StartCoroutine(OrderDialogue());
             OrderManager.Instance.GenerateRandomOrder(drink);
-            orderGiven = true;
         }
         else
         {
@@ -28,12 +29,13 @@ public class NPC : MonoBehaviour, IInteractable
 
             if(CheckOrder(drink, currentItem))
             {
-                Debug.Log("Order success!");
+                ToastManager.Instance.DisplayInteraction("Thank you!");
+                NPC_Movement.Instance.OrderReceived();  // NPC leaves
             }
             else
             {
                 HotbarManager.Instance.GetCurrentItemName(drink);
-                Debug.Log("Try again.");
+                ToastManager.Instance.DisplayInteraction("Try again.");
             }
         }
     }
@@ -45,27 +47,24 @@ public class NPC : MonoBehaviour, IInteractable
             return drinkOrder.cupSize == currentDrink.cupSize
             && drinkOrder.temperature == currentDrink.temperature
             && drinkOrder.milkType == currentDrink.milkType
-            && drinkOrder.iceLevel == currentDrink.iceLevel;
+            && drinkOrder.iceLevel == currentDrink.iceLevel
+            && drinkOrder.hasWater == currentDrink.hasWater;
         }
         //order.drinkType == current.DrinkType
 
         return false;
     }
-    /*
-    private NavMeshAgent agent;
 
-    void Start()
+    private IEnumerator OrderDialogue()
     {
-        agent = GetComponent<NavMeshAgent>();
+        ToastManager.Instance.DisplayInteraction("Hi! I would like to order a..");
+        yield return new WaitForSeconds(3f);
+        ToastManager.Instance.DisplayInteraction(HotbarManager.Instance.GetCurrentItemName(drink));
+        yield return new WaitForSeconds(5f);
+
+        orderGiven = true;
+        NPC_Movement.Instance.OrderGiven(); // NPC walks to next counter
     }
-    
-    void Update()
-    {
-        agent.SetDestination(GameObject.FindGameObjectWithTag("Target").transform.position);
-    }
-    */
-    // Order newOrder = new OrderManager.Instance.GenerateRandomOrder();
-    // npc.CurrentOrder = newOrder;
 }
 
 

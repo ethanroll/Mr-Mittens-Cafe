@@ -16,8 +16,12 @@ public class OrderManager : MonoBehaviour
     public Order GenerateRandomOrder(Drink drink)
     {
         Order generatedOrder = new Order();
+
+        // fill out NPC order details
         Item generatedItem = GenerateRandomDrink(drink);
         generatedOrder.requestedItem = generatedItem;
+
+
         return generatedOrder;
     }
 

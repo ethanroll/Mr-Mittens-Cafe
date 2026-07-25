@@ -2,30 +2,63 @@ using UnityEngine;
 
 public class NPC_Movement : MonoBehaviour
 {
-    public static NPC_Movement Instance;
-    public enum NPC_State { WalkToCounter, WaitAtCounter, WalkToPickup, WaitForPickup };
+    private NPC npc; // reference to NPC
 
-    [SerializeField] private Transform[] waypoints = new Transform[2];// where NPC go next
+    public enum NPC_State { Spawn, WalkToCounter, InQueue, WaitForQueue, WaitAtCounter, WalkToPickup, WaitForPickup };
+
+    [SerializeField] public Transform[] waypoints = new Transform[3];// where NPC go next
     [SerializeField] private float speed = 5f;
 
     private int currentWaypointIndex = 0;
     private Transform targetWaypoint;
-    private NPC_State currentState = NPC_State.WalkToCounter; // starting state
+    private NPC_State currentState = NPC_State.Spawn; // starting state
+    private int assignedQueueIndex = -1;
+    //private bool outOfQueue = true;
 
     void Awake()
     {
-        Instance = this;
+        npc = GetComponent<NPC>();
     }
 
     void Update()
     {
         switch (currentState)
         {
+            case NPC_State.Spawn:
+                NextWaypoint();
+                break;
+
             case NPC_State.WalkToCounter:
                 NextWaypoint();
                 break;
 
+            case NPC_State.WaitForQueue:
+                TryJoinQueue();
+                break;
+
+            case NPC_State.InQueue:
+                // could be moved into own method
+
+                //int queueIndex = NPC_QueueManager.Instance.NPC_StartLine.IndexOf(npc);   // get NPC current position in line
+                targetWaypoint = NPC_QueueManager.Instance.queueSpotsStart[assignedQueueIndex];
+                transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);  // walk towards spot
+
+                if (assignedQueueIndex == 0 && !NPC_QueueManager.Instance.counterOccupied)
+                {
+                    NPC_QueueManager.Instance.LeaveLine(npc); // step out of the line
+                    NPC_QueueManager.Instance.counterOccupied = true;    // claim the counter
+
+                    currentState = NPC_State.WaitAtCounter;              // switch states
+
+                    //targetWaypoint = waypoints[currentWaypointIndex]; // new destination
+                    //transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+                }
+                break;
+
             case NPC_State.WaitAtCounter:
+                //NPC_QueueManager.Instance.counterOccupied = true;
+                //Transform counterTarget = waypoints[waypoints.Length - 1]; // counter = last fixed waypoint
+                //transform.position = Vector2.MoveTowards(transform.position, counterTarget.position, speed * Time.deltaTime);
                 break;  // just waiting
 
             case NPC_State.WalkToPickup:
@@ -42,40 +75,86 @@ public class NPC_Movement : MonoBehaviour
         // check for waypoints
         if (waypoints.Length == 0) return;
 
+        // after spawn immedietely start walking to spot
+        if (currentState == NPC_State.Spawn)
+        {
+            currentWaypointIndex++;
+            currentState = NPC_State.WalkToCounter;
+        }
+
         // move toward current waypoint
         targetWaypoint = waypoints[currentWaypointIndex];
         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+
 
         // check if checkpoint reached
         if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
         {
             WaypointReached();
-        }
+        }     
     }
 
     public void WaypointReached()
     {
-        currentWaypointIndex++;
-
         if (currentState == NPC_State.WalkToCounter)
         {
-            currentState = NPC_State.WaitAtCounter;
+            // add to queue if not full
+            if (NPC_QueueManager.Instance.CanJoinQueue(npc))
+            {
+                assignedQueueIndex = NPC_QueueManager.Instance.NPC_StartLine.Count - 1;
+                currentState = NPC_State.InQueue;
+            }
+            else
+            {
+                currentState = NPC_State.WaitForQueue;
+            }
+            return;
         }
-        else if (currentState == NPC_State.WalkToPickup)
+
+        currentWaypointIndex++;
+
+        if (currentState == NPC_State.WalkToPickup)
         {
             currentState = NPC_State.WaitForPickup;
         }
     }
 
+    // get new spawn position everytime
+    /*public Transform GetNewSpawnPosition()
+    {
+
+    } */
+
     public void OrderGiven()
     {
         if (currentState == NPC_State.WaitAtCounter)
+        {
+            NPC_QueueManager.Instance.counterOccupied = false;  // counter is vacant
             currentState = NPC_State.WalkToPickup;
+        }
     }
 
     public void OrderReceived()
     {
         if (currentState == NPC_State.WaitForPickup)
+        {
+            // NPC_QueueManager.Instance.NPC_StartLine.Remove(npc);
             Destroy(gameObject);    // destroy NPC once order process is done
+        }
+    }
+
+    // set the new queue index
+    public void SetQueueIndex(int index)
+    {
+        assignedQueueIndex = index;
+    }
+
+    private void TryJoinQueue()
+    {
+        if (NPC_QueueManager.Instance.CanJoinQueue(npc))
+        {
+            assignedQueueIndex = NPC_QueueManager.Instance.NPC_StartLine.Count - 1; // add at back of line
+            currentState = NPC_State.InQueue;
+        }
     }
 }

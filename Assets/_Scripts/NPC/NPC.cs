@@ -3,10 +3,17 @@ using System.Collections;
 
 public class NPC : MonoBehaviour, IInteractable
 {
+    private NPC_Movement movement;  // reference to npc movement
+
     //private Drink drink;    // random drink
     private bool orderGiven = false;
     private Drink drink;
     private string orderName;
+
+    void Awake()
+    {
+        movement = GetComponent<NPC_Movement>(); // get THIS npc's own movement script
+    }
 
     public bool CanInteract()
     {
@@ -30,7 +37,7 @@ public class NPC : MonoBehaviour, IInteractable
             if(CheckOrder(drink, currentItem))
             {
                 ToastManager.Instance.DisplayInteraction("Thank you!");
-                NPC_Movement.Instance.OrderReceived();  // NPC leaves
+                movement.OrderReceived();  // NPC leaves
             }
             else
             {
@@ -57,13 +64,17 @@ public class NPC : MonoBehaviour, IInteractable
 
     private IEnumerator OrderDialogue()
     {
+        PlayerMovement.Instance.canMove = false;
+
         ToastManager.Instance.DisplayInteraction("Hi! I would like to order a..");
         yield return new WaitForSeconds(3f);
+
         ToastManager.Instance.DisplayInteraction(HotbarManager.Instance.GetCurrentItemName(drink));
         yield return new WaitForSeconds(5f);
 
         orderGiven = true;
-        NPC_Movement.Instance.OrderGiven(); // NPC walks to next counter
+        PlayerMovement.Instance.canMove = true;
+        movement.OrderGiven(); // NPC walks to next counter
     }
 }
 

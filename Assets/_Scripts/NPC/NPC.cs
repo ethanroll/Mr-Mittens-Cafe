@@ -13,6 +13,12 @@ public class NPC : MonoBehaviour, IInteractable
     void Awake()
     {
         movement = GetComponent<NPC_Movement>(); // get THIS npc's own movement script
+
+        // Ensure SpriteSorter component exists on the NPC so it renders above counters
+        if (GetComponent<SpriteSorter>() == null)
+        {
+            gameObject.AddComponent<SpriteSorter>();
+        }
     }
 
     public bool CanInteract()

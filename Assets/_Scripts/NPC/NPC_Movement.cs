@@ -4,16 +4,21 @@ public class NPC_Movement : MonoBehaviour
 {
     private NPC npc; // reference to NPC
 
-    public enum NPC_State { Spawn, WalkToCounter, InQueue, WaitForQueue, WaitAtCounter, WalkToPickup, WaitForPickup };
+    public enum NPC_State { Spawn, WalkToCounter, InQueue, WaitForQueue, WaitAtCounter, WalkToPickup, WaitForPickup, OrderReceived };
 
     [SerializeField] public Transform[] waypoints = new Transform[3];// where NPC go next
     [SerializeField] private float speed = 5f;
 
-    private int currentWaypointIndex = 0;
-    private Transform targetWaypoint;
     private NPC_State currentState = NPC_State.Spawn; // starting state
+    private Transform targetWaypoint;
+
+    private int currentWaypointIndex = 0;
     private int assignedQueueIndex = -1;
-    //private bool outOfQueue = true;
+    private int assignedTableIndex = -1;
+
+    // change later
+    private bool haveJoinedList = false;
+
 
     void Awake()
     {
@@ -29,7 +34,7 @@ public class NPC_Movement : MonoBehaviour
                 break;
 
             case NPC_State.WalkToCounter:
-                int counterIdx = Mathf.Min(1, waypoints.Length - 1);
+                int counterIdx = Mathf.Min(1, waypoints.Length - 1);    // use index 1 for counter
                 if (counterIdx >= 0 && waypoints.Length > 0)
                 {
                     targetWaypoint = waypoints[counterIdx];
@@ -47,6 +52,7 @@ public class NPC_Movement : MonoBehaviour
                 break;
 
             case NPC_State.InQueue:
+                // move through queue if not at counter
                 if (assignedQueueIndex >= 0 && assignedQueueIndex < NPC_QueueManager.Instance.queueSpotsStart.Length)
                 {
                     targetWaypoint = NPC_QueueManager.Instance.queueSpotsStart[assignedQueueIndex];
@@ -73,7 +79,25 @@ public class NPC_Movement : MonoBehaviour
                 break;  // just waiting
 
             case NPC_State.WalkToPickup:
-                NextWaypoint();
+                // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
+                if (!haveJoinedList)
+                {
+                    NPC_PickupManager.Instance.NPC_WaitingAtTables.Add(npc);
+                    assignedTableIndex = NPC_PickupManager.Instance.FindOpenTable();  // set index
+                    targetWaypoint = NPC_PickupManager.Instance.tables[assignedTableIndex];
+                    haveJoinedList = true;
+                }
+
+                // move to table
+                if (targetWaypoint != null)
+                {
+                    transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+
+                    if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                        currentState = NPC_State.WaitForPickup;
+                }
+                
+                // NextWaypoint();
                 break;
 
             case NPC_State.WaitForPickup:
@@ -90,13 +114,14 @@ public class NPC_Movement : MonoBehaviour
         targetWaypoint = waypoints[currentWaypointIndex];
         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
-        // check if checkpoint reached
+        /*/ check if checkpoint reached 
         if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
         {
             WaypointReached();
-        }     
+        }      */
     }
 
+    /*
     public void WaypointReached()
     {
         currentWaypointIndex++;
@@ -106,6 +131,7 @@ public class NPC_Movement : MonoBehaviour
             currentState = NPC_State.WaitForPickup;
         }
     }
+    */
 
     public void OrderGiven()
     {

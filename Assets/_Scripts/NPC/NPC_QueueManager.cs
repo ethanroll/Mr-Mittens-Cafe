@@ -6,14 +6,10 @@ public class NPC_QueueManager : MonoBehaviour
     public static NPC_QueueManager Instance;
 
     public List<NPC> NPC_StartLine = new List<NPC>();
-    public List<NPC> NPC_EndLine = new List<NPC>();
-
     [SerializeField] public Transform[] queueSpotsStart = new Transform[5]; // store initial queue spots
-    //[SerializeField] public Transform[] queueSpotsEnd = new Transfom[9]; // store waiting queue spots
 
-    private bool queueFull;
     private Transform queueWaypoint; // get waypoint for queue
-
+    private bool queueFull;
     public bool counterOccupied = false; // store if counter is currently occuipied by NPC
 
 
@@ -31,18 +27,6 @@ public class NPC_QueueManager : MonoBehaviour
 
         return queueFull;
     }
-
-    /*
-    public void AddNPC_ToQueue(NPC npc)
-    {
-        num_NPC_InQueue++;
-    }
-
-    public NPC RemoveNPC_FromQueue(NPC npc)
-    {
-
-    } */
-
     
     public Transform GetOpenQueueSpot()
     {

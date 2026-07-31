@@ -15,6 +15,7 @@ public class NPC_Movement : MonoBehaviour
     private int currentWaypointIndex = 0;
     private int assignedQueueIndex = -1;
     private int assignedTableIndex = -1;
+    private bool orderGiven = false;
 
     // change later
     private bool haveJoinedList = false;
@@ -79,8 +80,6 @@ public class NPC_Movement : MonoBehaviour
                 break;  // just waiting
 
             case NPC_State.WalkToPickup:
-                if (!NPC_PickupManager.Instance.tablesFull)
-                {
                     // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
                     if (!haveJoinedList)
                     {
@@ -98,7 +97,6 @@ public class NPC_Movement : MonoBehaviour
                         if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
                             currentState = NPC_State.WaitForPickup;
                     }
-                }
                 // NextWaypoint();
                 break;
 
@@ -136,6 +134,7 @@ public class NPC_Movement : MonoBehaviour
     {
         if (currentState == NPC_State.WaitAtCounter)
         {
+            npc.orderGiven = true;
             NPC_QueueManager.Instance.counterOccupied = false;  // counter is vacant
             currentState = NPC_State.WalkToPickup;
         }

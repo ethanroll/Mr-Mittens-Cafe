@@ -10,7 +10,6 @@ public class NPC_PickupManager : MonoBehaviour
     [SerializeField] public Transform[] tables = new Transform[10];   // store table spots
     public bool[] tableOccupied = new bool[10];
 
-    public bool tablesFull = false;
     private int foundTableIndex;
     private bool foundIndex;
 
@@ -28,22 +27,22 @@ public class NPC_PickupManager : MonoBehaviour
             foundTableIndex = UnityEngine.Random.Range(0, tables.Length);
             if (!tableOccupied[foundTableIndex])
             {
-                tablesFull = false;
                 tableOccupied[foundTableIndex] = true;
                 foundIndex = true;
 
                 return foundTableIndex;
             }
         }
+        return foundTableIndex;
+    }
 
+    public bool CheckTablesFull()
+    {
         // check if tables are full
         if (tableOccupied.All(t => t))
         {
-            // no free tables, bail out
-            tablesFull = true;
-            return -1;
+            return true;
         }
-
-        return -1;
+        return false;
     }
 }

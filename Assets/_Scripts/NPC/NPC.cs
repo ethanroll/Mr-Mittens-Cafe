@@ -6,7 +6,7 @@ public class NPC : MonoBehaviour, IInteractable
     private NPC_Movement movement;  // reference to npc movement
 
     //private Drink drink;    // random drink
-    private bool orderGiven = false;
+    public bool orderGiven = false;
     private Drink drink;
     private string orderName;
 
@@ -27,18 +27,24 @@ public class NPC : MonoBehaviour, IInteractable
         // return !IsOpened;
     }
 
+
+    // CHANGE SO CANT INTERACT AGAIN WHILE ALREADY INTERACTING
     public void Interact()
     {
-        if (!NPC_PickupManager.Instance.tablesFull)
-        {
-            if (!orderGiven)
+            if (NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+            {
+                ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
+            }
+
+            else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
             {
                 drink = new Drink();
 
                 StartCoroutine(OrderDialogue());
                 OrderManager.Instance.GenerateRandomOrder(drink);
             }
-            else
+
+            else if(orderGiven)
             {
                 Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
 
@@ -53,11 +59,6 @@ public class NPC : MonoBehaviour, IInteractable
                     ToastManager.Instance.DisplayInteraction("Try again.");
                 }
             }
-        }
-        else
-        {
-            ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
-        }
     }
 
     private bool CheckOrder(Item order, Item current)
@@ -85,7 +86,6 @@ public class NPC : MonoBehaviour, IInteractable
         ToastManager.Instance.DisplayInteraction(HotbarManager.Instance.GetCurrentItemName(drink));
         yield return new WaitForSeconds(5f);
 
-        orderGiven = true;
         PlayerMovement.Instance.canMove = true;
         movement.OrderGiven(); // NPC walks to next counter
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NPC_PickupManager : MonoBehaviour
@@ -20,15 +21,14 @@ public class NPC_PickupManager : MonoBehaviour
 
     public int FindOpenTable()
     {
-        // do an if tables full return -1
         foundIndex = false;
-        // int attempts = 0;
 
         while (!foundIndex)
         {
             foundTableIndex = UnityEngine.Random.Range(0, tables.Length);
             if (!tableOccupied[foundTableIndex])
             {
+                tablesFull = false;
                 tableOccupied[foundTableIndex] = true;
                 foundIndex = true;
 
@@ -36,14 +36,14 @@ public class NPC_PickupManager : MonoBehaviour
             }
         }
 
-        /*/ have attempts to see if nothings open 
-        attempts++;
-        if (attempts >= tables.Length)
+        // check if tables are full
+        if (tableOccupied.All(t => t))
         {
-            tablesFull = true; // we've tried enough times to conclude nothing's open
+            // no free tables, bail out
+            tablesFull = true;
             return -1;
         }
-        */
-        return foundTableIndex;
+
+        return -1;
     }
 }

@@ -79,29 +79,46 @@ public class NPC_Movement : MonoBehaviour
                 break;  // just waiting
 
             case NPC_State.WalkToPickup:
-                // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
-                if (!haveJoinedList)
+                if (!NPC_PickupManager.Instance.tablesFull)
                 {
-                    NPC_PickupManager.Instance.NPC_WaitingAtTables.Add(npc);
-                    assignedTableIndex = NPC_PickupManager.Instance.FindOpenTable();  // set index
-                    targetWaypoint = NPC_PickupManager.Instance.tables[assignedTableIndex];
-                    haveJoinedList = true;
-                }
+                    // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
+                    if (!haveJoinedList)
+                    {
+                        NPC_PickupManager.Instance.NPC_WaitingAtTables.Add(npc);
+                        assignedTableIndex = NPC_PickupManager.Instance.FindOpenTable();  // set index
+                        targetWaypoint = NPC_PickupManager.Instance.tables[assignedTableIndex];
+                        haveJoinedList = true;
+                    }
 
-                // move to table
-                if (targetWaypoint != null)
-                {
-                    transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+                    // move to table
+                    if (targetWaypoint != null)
+                    {
+                        transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
-                    if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
-                        currentState = NPC_State.WaitForPickup;
+                        if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                            currentState = NPC_State.WaitForPickup;
+                    }
                 }
-                
                 // NextWaypoint();
                 break;
 
             case NPC_State.WaitForPickup:
                 break;  // just waiting
+
+            case NPC_State.OrderReceived:
+                // move toward exit
+                targetWaypoint = waypoints[currentWaypointIndex];
+                transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+
+                // destroy NPC once order process is done
+                if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                {
+                    Destroy(gameObject);
+                    NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
+                    NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
+                    NPC_Manager.Instance.totalNumNPCs--;
+                }
+                break;
         }
     }
 
@@ -113,25 +130,7 @@ public class NPC_Movement : MonoBehaviour
         // move toward current waypoint
         targetWaypoint = waypoints[currentWaypointIndex];
         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
-
-        /*/ check if checkpoint reached 
-        if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
-        {
-            WaypointReached();
-        }      */
     }
-
-    /*
-    public void WaypointReached()
-    {
-        currentWaypointIndex++;
-
-        if (currentState == NPC_State.WalkToPickup)
-        {
-            currentState = NPC_State.WaitForPickup;
-        }
-    }
-    */
 
     public void OrderGiven()
     {
@@ -144,9 +143,11 @@ public class NPC_Movement : MonoBehaviour
 
     public void OrderReceived()
     {
+        // exit store
         if (currentState == NPC_State.WaitForPickup)
         {
-            Destroy(gameObject);    // destroy NPC once order process is done
+            currentWaypointIndex++;
+            currentState = NPC_State.OrderReceived;
         }
     }
 

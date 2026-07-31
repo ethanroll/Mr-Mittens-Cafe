@@ -29,27 +29,34 @@ public class NPC : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (!orderGiven)
+        if (!NPC_PickupManager.Instance.tablesFull)
         {
-            drink = new Drink();
-
-            StartCoroutine(OrderDialogue());
-            OrderManager.Instance.GenerateRandomOrder(drink);
-        }
-        else
-        {
-            Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-
-            if(CheckOrder(drink, currentItem))
+            if (!orderGiven)
             {
-                ToastManager.Instance.DisplayInteraction("Thank you!");
-                movement.OrderReceived();  // NPC leaves
+                drink = new Drink();
+
+                StartCoroutine(OrderDialogue());
+                OrderManager.Instance.GenerateRandomOrder(drink);
             }
             else
             {
-                HotbarManager.Instance.GetCurrentItemName(drink);
-                ToastManager.Instance.DisplayInteraction("Try again.");
+                Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
+
+                if (CheckOrder(drink, currentItem))
+                {
+                    ToastManager.Instance.DisplayInteraction("Thank you!");
+                    movement.OrderReceived();  // NPC leaves
+                }
+                else
+                {
+                    HotbarManager.Instance.GetCurrentItemName(drink);
+                    ToastManager.Instance.DisplayInteraction("Try again.");
+                }
             }
+        }
+        else
+        {
+            ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
         }
     }
 

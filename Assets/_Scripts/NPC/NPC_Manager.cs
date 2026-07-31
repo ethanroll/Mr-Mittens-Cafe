@@ -33,7 +33,7 @@ public class NPC_Manager : MonoBehaviour
     {
         while (true)
         {
-            if (totalNumNPCs < 10)
+            if (totalNumNPCs < 20)
             {
                 if (NPC_QueueManager.Instance.IsNPC_StartQueueFull())
                 {
@@ -48,7 +48,7 @@ public class NPC_Manager : MonoBehaviour
                 NPC_Movement movement = newNPC.GetComponent<NPC_Movement>();
                 movement.waypoints = waypointContainer.Cast<Transform>().ToArray();
 
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(1f);
             }            
         }
     }

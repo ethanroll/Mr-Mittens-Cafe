@@ -151,6 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18dc625963561324d96086f254c57726, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPC
+  orderGiven: 0
+  NPC_Number: 0
 --- !u!114 &1718105468079144428
 MonoBehaviour:
   m_ObjectHideFlags: 0

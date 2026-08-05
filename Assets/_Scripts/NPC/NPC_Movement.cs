@@ -114,7 +114,7 @@ public class NPC_Movement : MonoBehaviour
                     Destroy(gameObject);
                     NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
                     NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
-                    NPC_Manager.Instance.totalNumNPCs--;
+                    //NPC_Manager.Instance.totalNumNPCs--;
                 }
                 break;
         }

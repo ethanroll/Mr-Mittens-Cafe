@@ -2546,7 +2546,6 @@ GameObject:
   - component: {fileID: 1153850243}
   - component: {fileID: 1153850244}
   - component: {fileID: 1153850245}
-  - component: {fileID: 1153850246}
   - component: {fileID: 1153850247}
   - component: {fileID: 1153850248}
   m_Layer: 0
@@ -2616,26 +2615,6 @@ MonoBehaviour:
   waypointContainer: {fileID: 1796318926}
   currentNPC: {fileID: 0}
   totalNumNPCs: 0
---- !u!114 &1153850246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1153850241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23adc16557d090942bf9ee12b04d6688, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NPC_QueueManager
-  NPC_StartLine: []
-  queueSpotsStart:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  counterOccupied: 0
 --- !u!114 &1153850247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2681,7 +2660,6 @@ MonoBehaviour:
   - {fileID: 1153428089}
   - {fileID: 1827951167}
   tableOccupied: 00000000000000000000
-  tablesFull: 0
 --- !u!1 &1179536660
 GameObject:
   m_ObjectHideFlags: 0

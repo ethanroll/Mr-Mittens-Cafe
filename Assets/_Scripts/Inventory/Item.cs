@@ -23,6 +23,6 @@ public class Drink: Item
 public class Food: Item
 {
     public PastryType? pastryType;
-    public string? flavor;
+    //public string? flavor;
     public SavoryType? savoryType;
 }

@@ -102,7 +102,7 @@ public class HotbarManager : MonoBehaviour
     }
 
 
-    // print current item name
+    // print current item name NEED TO FIX ICE SYSTEM
     public string GetCurrentItemName(Item item)
     {
         string output = item.itemName;
@@ -125,14 +125,13 @@ public class HotbarManager : MonoBehaviour
             {
                 drink.drinkType = DrinkType.Americano;
                 output += $"{drink.cupSize} {drink.drinkType}";
-            }
-            else
-            {
-                return DefaultItemPrint(drink);
-            }
-
-            
+            }     
         }
+        else
+        {
+            return DefaultItemPrint(item);
+        }
+
         ToastManager.Instance.DisplayEquippedItem(output);
         return output;
     }
@@ -152,6 +151,11 @@ public class HotbarManager : MonoBehaviour
             if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
             if (drink.milkType != null) output += " with " + drink.milkType + " milk";
             if (drink.hasWater) output += " with water";
+        }
+        else if (item is Food food)
+        {
+            if (food.pastryType != null) output += food.pastryType;
+            //if (food.savoryType != null) output += food.savoryType;
         }
         ToastManager.Instance.DisplayEquippedItem(output);
         return output;     

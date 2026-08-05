@@ -1,27 +1,50 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class OrderManager : MonoBehaviour
 {
+    public NPC npc;
+
     public static OrderManager Instance;
     private List<Order> orders = new List<Order>();    // store all orders
+    public List<bool> foodSchedule = new List<bool>(); // store if NPC will order food
+
     private int milkOrWater;    // store whether milk or water liquid will be chosen
+
+    private bool foodScheduleFinished = false;
+    //public bool willOrderFood = false;
+    private int numOrderingFood = 0;
+    private int foodOrderQuota = 5;
 
     public void Awake()
     {
+        npc = GetComponent<NPC>();  // MIGHT NOT BE NEEDED ANYMORE
         Instance = this;
     }
 
-    public Order GenerateRandomOrder(Drink drink)
+    void Start()
     {
-        Order generatedOrder = new Order();
+         PopulateFoodSchedule();
+    }
+
+    public void GenerateRandomOrder(NPC npc, Drink drink, Food food)
+    {
+        //Order generatedOrder = new Order();
 
         // fill out NPC order details
-        Item generatedItem = GenerateRandomDrink(drink);
-        generatedOrder.requestedItem = generatedItem;
+        drink = GenerateRandomDrink(drink);
+        npc.requestedItems.Add(drink);
 
+        // chance for a food item
+        if (npc.WillOrderFood())
+        {
+            food = GenerateRandomFood(food);
+            npc.requestedItems.Add(food);
+        }
 
-        return generatedOrder;
+        //return npc.requestedItems;
     }
 
     public Drink GenerateRandomDrink(Drink drink)
@@ -44,28 +67,55 @@ public class OrderManager : MonoBehaviour
         else
             drink.hasWater = true;
 
-        Debug.Log(drink);
         HotbarManager.Instance.GetCurrentItemName(drink);
         return drink;
     }
 
-    public void GenerateRandomFood()
+    public Food GenerateRandomFood(Food food)
     {
-        Food food = new Food();
+        food = new Food();
 
+        // CHANGE LATER
+        food.pastryType = PastryType.ApplePie;
+        HotbarManager.Instance.GetCurrentItemName(food);
         // Randomly choose between pastry and savory
+        return food;
+    }
+
+    // method to shuffle vales, fisher yates method
+    private void Shuffle<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]); // swap
+        }
+    }
+
+    // showcase which npcs will order food
+    public void PopulateFoodSchedule()
+    {
+        // prefill with false so every index exists
+        for (int i = 0; i < NPC_Manager.Instance.numNPC_Cap; i++)
+            foodSchedule.Add(false);
+
+        List<int> indices = Enumerable.Range(0, NPC_Manager.Instance.numNPC_Cap).ToList();
+        Shuffle(indices); // fisher yates method
+
+        foreach (int i in indices)
+        {
+            if (numOrderingFood >= foodOrderQuota)
+                break;
+
+            foodSchedule[i] = true;
+            numOrderingFood++;
+        }
     }
 
     // generic method for getting random enum value for a drink/food order
     private T GetRandomEnumValue<T>() where T : System.Enum
     {
         System.Array values = System.Enum.GetValues(typeof(T));
-        return (T)values.GetValue(Random.Range(0, values.Length));
+        return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
-
-
-    //public bool CheckOrder()
-    //{
-
-    //}
 }

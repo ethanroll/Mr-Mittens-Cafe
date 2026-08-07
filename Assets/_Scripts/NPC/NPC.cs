@@ -150,6 +150,28 @@ public class NPC : MonoBehaviour, IInteractable
             return true;
         return false;
     }
+
+    /// <summary>
+    /// Returns formatted order item descriptions and their delivery status for UI display.
+    /// </summary>
+    public List<string> GetFormattedOrderDetails()
+    {
+        List<string> details = new List<string>();
+
+        for (int i = 0; i < requestedItems.Count; i++)
+        {
+            Item item = requestedItems[i];
+            bool isDelivered = i < requestedItemsGiven.Count && requestedItemsGiven[i];
+
+            string itemName = HotbarManager.Instance != null ? HotbarManager.Instance.GetCurrentItemName(item) : item.itemName;
+            string statusTag = isDelivered ? "<color=#00FF00>[Delivered]</color>" : "<color=#FFA500>[Pending]</color>";
+
+            details.Add($"- {itemName} {statusTag}");
+        }
+
+        return details;
+    }
 }
+
 
 

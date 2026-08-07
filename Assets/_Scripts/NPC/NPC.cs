@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class NPC : MonoBehaviour, IInteractable
 {
     private NPC_Movement movement;  // reference to npc movement
-    //private Order order;
-    public bool orderGiven = false;
+
+    public int NPC_Number;  // store what number the npc is
     private Drink drink;
     private Food food;
-    public int NPC_Number;  // store what number the npc is
-
+    public bool orderGiven = false;
+    
     public List<Item> requestedItems = new List<Item>();
+    public List<bool> requestedItemsGiven = new List<bool>(); // bool val corresponding to if item was given
 
     void Awake()
     {
         movement = GetComponent<NPC_Movement>(); // get THIS npc's own movement script
-        //order = GetComponent<Order>(); // get THIS npc's own order script
 
         // Ensure SpriteSorter component exists on the NPC so it renders above counters
         if (GetComponent<SpriteSorter>() == null)
@@ -35,37 +36,36 @@ public class NPC : MonoBehaviour, IInteractable
     // CHANGE SO CANT INTERACT AGAIN WHILE ALREADY INTERACTING
     public void Interact()
     {
-            if (NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+        if (NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+        {
+            ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
+        }
+
+        else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+        {
+            drink = new Drink();
+
+            // if have food
+            food = new Food();
+
+            StartCoroutine(OrderDialogue());
+            OrderManager.Instance.GenerateRandomOrder(this, drink, food);
+        }
+
+        else if(orderGiven)
+        {
+            Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
+
+            if (CheckOrder(currentItem))
             {
-                ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
+                ToastManager.Instance.DisplayInteraction("Thank you!");
+                movement.OrderReceived();  // NPC leaves
             }
-
-            else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+            else
             {
-                drink = new Drink();
-
-                // if have food
-                food = new Food();
-
-                StartCoroutine(OrderDialogue());
-                OrderManager.Instance.GenerateRandomOrder(this, drink, food);
+                StartCoroutine(SayOrder());
             }
-
-            else if(orderGiven)
-            {
-                Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-
-                if (CheckOrder(currentItem))
-                {
-                    ToastManager.Instance.DisplayInteraction("Thank you!");
-                    movement.OrderReceived();  // NPC leaves
-                }
-                else
-                {
-                    HotbarManager.Instance.GetCurrentItemName(drink);
-                    ToastManager.Instance.DisplayInteraction("Try again.");
-                }
-            }
+        }
     }
 
     private bool CheckOrder(Item currentOrder)
@@ -73,23 +73,36 @@ public class NPC : MonoBehaviour, IInteractable
         for (int i = 0; i < requestedItems.Count; i++)
         {
             Item requestedItem = requestedItems[i];
+            bool isCorrectItem = false;
 
-            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink)
+            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink && !requestedItemsGiven[i])
             {
-                return drinkOrder.cupSize == currentDrink.cupSize
+                if (drinkOrder.cupSize == currentDrink.cupSize
                 && drinkOrder.temperature == currentDrink.temperature
                 && drinkOrder.milkType == currentDrink.milkType
                 && drinkOrder.iceLevel == currentDrink.iceLevel
-                && drinkOrder.hasWater == currentDrink.hasWater;
+                && drinkOrder.hasWater == currentDrink.hasWater)
+                {
+                    isCorrectItem = true;
+                    requestedItemsGiven[i] = isCorrectItem;
+                    HotbarManager.Instance.RemoveFromHotbar();
+                }
             }
 
-            if (requestedItem is Food foodOrder && currentOrder is Food currentFood)
+            if (requestedItem is Food foodOrder && currentOrder is Food currentFood && !requestedItemsGiven[i])
             {
-                return foodOrder.pastryType == currentFood.pastryType;
+                if (foodOrder.pastryType == currentFood.pastryType) {
+                    isCorrectItem = true;
+                    requestedItemsGiven[i] = isCorrectItem;
+                    HotbarManager.Instance.RemoveFromHotbar();
+                }                 
+                // add savory later
             }
-            //order.drinkType == current.DrinkType
         }
-        return false;
+
+        // check if all incdices are true for requestedItemsGiven list
+        bool allTrue = requestedItemsGiven.All(x => x);
+        return allTrue;
     }
     
 
@@ -100,7 +113,21 @@ public class NPC : MonoBehaviour, IInteractable
         ToastManager.Instance.DisplayInteraction("Hi! I would like to order..");
         yield return new WaitForSeconds(2f);
 
-        for(int i = 0; i < requestedItems.Count; i++)
+        yield return StartCoroutine(SayOrder()); // wait to finish
+
+        PlayerMovement.Instance.canMove = true;
+        movement.OrderGiven(); // NPC walks to next counter
+    }
+
+    private IEnumerator SayOrder()
+    {
+        if (orderGiven)
+        {
+            ToastManager.Instance.DisplayInteraction("My order is..");
+            yield return new WaitForSeconds(2f);
+        }
+
+        for (int i = 0; i < requestedItems.Count; i++)
         {
             Item currentItem = requestedItems[i];
             if (currentItem is Drink drink)
@@ -114,9 +141,6 @@ public class NPC : MonoBehaviour, IInteractable
                 yield return new WaitForSeconds(3f);
             }
         }
-
-        PlayerMovement.Instance.canMove = true;
-        movement.OrderGiven(); // NPC walks to next counter
     }
 
     // check if NPC will order food

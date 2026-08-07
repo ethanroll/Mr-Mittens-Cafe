@@ -11,6 +11,7 @@ public class HotbarManager : MonoBehaviour
     Key[] hotbarKeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6,
                              Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0 }; // store keypressed to corresponding hotbar slot
 
+    // UI
     public GameObject hotbarPanel;
     public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;
@@ -21,6 +22,8 @@ public class HotbarManager : MonoBehaviour
     public bool drinkIsBusy = false; // store value for if drink is in a process
     private bool canPressAgain = false;
     public bool hasSlot = false; // store if activeSlot > -1
+    private bool hasIce = false;
+    private bool isSpecialDrink = false;
 
 
 
@@ -102,7 +105,7 @@ public class HotbarManager : MonoBehaviour
     }
 
 
-    // print current item name NEED TO FIX ICE SYSTEM
+    // print current item name FIX WITH ENUM FOR CAPITLIZATION A VS AN ETC
     public string GetCurrentItemName(Item item)
     {
         string output = item.itemName;
@@ -111,54 +114,71 @@ public class HotbarManager : MonoBehaviour
         {
             if (drink.cupSize == null)
                 return "Empty slot";
+
+            if (drink.cupSize != null) output += drink.cupSize;
+
             if (drink.temperature == Temperature.Iced)
-                output += "Iced ";
-
-            // Espresso
-            if (drink.milkType == null && drink.numEspressoShots == 2 && !drink.hasWater)
             {
-                drink.drinkType = DrinkType.Espresso;
-                output += $"{drink.cupSize} {drink.drinkType}";
+                output += " Iced ";
+                hasIce = true;
             }
-            // Americano
-            else if(drink.milkType == null && (drink.numEspressoShots == 1 || drink.numEspressoShots ==2) && drink.hasWater)
+            else
             {
-                drink.drinkType = DrinkType.Americano;
-                output += $"{drink.cupSize} {drink.drinkType}";
-            }     
+                output += " Hot ";
+            }
+
+            AssignSpecialDrink(drink);  // assign a drink type if special drink
+
+            if (isSpecialDrink)
+            {
+                output += $" {drink.drinkType}"; // {drink.cupSize}
+            }
+            else if(!isSpecialDrink)
+            {
+                output += "cup";
+
+                if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
+                if (drink.milkType != null) output += " with " + drink.milkType + " milk";
+                if (drink.hasWater) output += " with water";
+            }
+
+            if (hasIce)
+            {
+                output += " with " + drink.iceLevel + " ice";
+            }
         }
-        else
-        {
-            return DefaultItemPrint(item);
-        }
 
-        ToastManager.Instance.DisplayEquippedItem(output);
-        return output;
-    }
-
-
-
-    // print if drink is not a predetermined drink
-    private string DefaultItemPrint(Item item)
-    {
-        string output = item.itemName;
-
-        if (item is Drink drink)
-        {
-            if (drink.temperature != null) output += drink.temperature + " ";
-            if (drink.cupSize != null) output += drink.cupSize + " cup";
-            if (drink.iceLevel != null) output += " with " + drink.iceLevel + " ice";
-            if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
-            if (drink.milkType != null) output += " with " + drink.milkType + " milk";
-            if (drink.hasWater) output += " with water";
-        }
         else if (item is Food food)
         {
             if (food.pastryType != null) output += food.pastryType;
             //if (food.savoryType != null) output += food.savoryType;
         }
-        ToastManager.Instance.DisplayEquippedItem(output);
-        return output;     
+
+        //ToastManager.Instance.DisplayEquippedItem(output);
+        return output;
+    }
+
+
+    // assign drink type if special drink
+    private void AssignSpecialDrink(Drink drink)
+    {
+        // Espresso
+        if (drink.milkType == null && drink.numEspressoShots == 2 && !drink.hasWater)
+        {
+            drink.drinkType = DrinkType.Espresso;
+            isSpecialDrink = true;
+        }
+
+        // Americano
+        else if (drink.milkType == null && (drink.numEspressoShots == 1 || drink.numEspressoShots == 2) && drink.hasWater)
+        {
+            drink.drinkType = DrinkType.Americano;
+            isSpecialDrink = true;
+        }
+        else
+        {
+            isSpecialDrink = false;
+        }
     }
 
 
@@ -179,7 +199,6 @@ public class HotbarManager : MonoBehaviour
             }
         }
     }
-
 
     // remove Item from hotbar
     public void RemoveFromHotbar()

@@ -44,7 +44,11 @@ public class OrderManager : MonoBehaviour
             npc.requestedItems.Add(food);
         }
 
-        //return npc.requestedItems;
+        // populate requestedItemsGiven
+        for (int i = 0; i < npc.requestedItems.Count; i++)
+        {
+            npc.requestedItemsGiven.Add(false);
+        }
     }
 
     public Drink GenerateRandomDrink(Drink drink)

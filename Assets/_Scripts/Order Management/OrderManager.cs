@@ -122,4 +122,29 @@ public class OrderManager : MonoBehaviour
         System.Array values = System.Enum.GetValues(typeof(T));
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
+
+    /// <summary>
+    /// Returns all NPCs in the scene who currently have active placed orders.
+    /// </summary>
+    public List<NPC> GetActiveNPCsWithOrders()
+    {
+        List<NPC> activeNPCs = new List<NPC>();
+
+#if UNITY_2023_1_OR_NEWER
+        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsSortMode.None);
+#else
+        NPC[] allNPCs = FindObjectsOfType<NPC>();
+#endif
+        foreach (NPC npcItem in allNPCs)
+        {
+            if (npcItem != null && npcItem.orderGiven && npcItem.requestedItems != null && npcItem.requestedItems.Count > 0)
+            {
+                activeNPCs.Add(npcItem);
+            }
+        }
+
+        activeNPCs.Sort((a, b) => a.NPC_Number.CompareTo(b.NPC_Number));
+        return activeNPCs;
+    }
 }
+

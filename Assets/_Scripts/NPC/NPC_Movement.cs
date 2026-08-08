@@ -28,58 +28,60 @@ public class NPC_Movement : MonoBehaviour
 
     void Update()
     {
-        switch (currentState)
+        if (!RoundManager.Instance.isRoundOver)
         {
-            case NPC_State.Spawn:
-                TryJoinQueue();
-                break;
+            switch (currentState)
+            {
+                case NPC_State.Spawn:
+                    TryJoinQueue();
+                    break;
 
-            case NPC_State.WalkToCounter:
-                int counterIdx = Mathf.Min(1, waypoints.Length - 1);    // use index 1 for counter
-                if (counterIdx >= 0 && waypoints.Length > 0)
-                {
-                    targetWaypoint = waypoints[counterIdx];
-                    transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
-
-                    if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                case NPC_State.WalkToCounter:
+                    int counterIdx = Mathf.Min(1, waypoints.Length - 1);    // use index 1 for counter
+                    if (counterIdx >= 0 && waypoints.Length > 0)
                     {
-                        currentState = NPC_State.WaitAtCounter;
-                    }
-                }
-                break;
-
-            case NPC_State.WaitForQueue:
-                TryJoinQueue();
-                break;
-
-            case NPC_State.InQueue:
-                // move through queue if not at counter
-                if (assignedQueueIndex >= 0 && assignedQueueIndex < NPC_QueueManager.Instance.queueSpotsStart.Length)
-                {
-                    targetWaypoint = NPC_QueueManager.Instance.queueSpotsStart[assignedQueueIndex];
-                    if (targetWaypoint != null)
-                    {
+                        targetWaypoint = waypoints[counterIdx];
                         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
-                    }
-                }
 
-                // If front of line and counter is free, step up to counter
-                if (assignedQueueIndex == 0 && !NPC_QueueManager.Instance.counterOccupied)
-                {
-                    if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                        if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                        {
+                            currentState = NPC_State.WaitAtCounter;
+                        }
+                    }
+                    break;
+
+                case NPC_State.WaitForQueue:
+                    TryJoinQueue();
+                    break;
+
+                case NPC_State.InQueue:
+                    // move through queue if not at counter
+                    if (assignedQueueIndex >= 0 && assignedQueueIndex < NPC_QueueManager.Instance.queueSpotsStart.Length)
                     {
-                        NPC_QueueManager.Instance.LeaveLine(npc); // step out of the line
-                        NPC_QueueManager.Instance.counterOccupied = true;    // claim the counter
-                        currentWaypointIndex = 1;
-                        currentState = NPC_State.WalkToCounter;              // walk up to counter
+                        targetWaypoint = NPC_QueueManager.Instance.queueSpotsStart[assignedQueueIndex];
+                        if (targetWaypoint != null)
+                        {
+                            transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+                        }
                     }
-                }
-                break;
 
-            case NPC_State.WaitAtCounter:
-                break;  // just waiting
+                    // If front of line and counter is free, step up to counter
+                    if (assignedQueueIndex == 0 && !NPC_QueueManager.Instance.counterOccupied)
+                    {
+                        if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                        {
+                            NPC_QueueManager.Instance.LeaveLine(npc); // step out of the line
+                            NPC_QueueManager.Instance.counterOccupied = true;    // claim the counter
+                            currentWaypointIndex = 1;
+                            currentState = NPC_State.WalkToCounter;              // walk up to counter
+                        }
+                    }
+                    break;
 
-            case NPC_State.WalkToPickup:
+                case NPC_State.WaitAtCounter:
+                    break;  // just waiting
+
+                case NPC_State.WalkToPickup:
                     // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
                     if (!haveJoinedList)
                     {
@@ -97,26 +99,27 @@ public class NPC_Movement : MonoBehaviour
                         if (targetWaypoint != null && Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
                             currentState = NPC_State.WaitForPickup;
                     }
-                // NextWaypoint();
-                break;
+                    // NextWaypoint();
+                    break;
 
-            case NPC_State.WaitForPickup:
-                break;  // just waiting
+                case NPC_State.WaitForPickup:
+                    break;  // just waiting
 
-            case NPC_State.OrderReceived:
-                // move toward exit
-                targetWaypoint = waypoints[currentWaypointIndex];
-                transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+                case NPC_State.OrderReceived:
+                    // move toward exit
+                    targetWaypoint = waypoints[currentWaypointIndex];
+                    transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
-                // destroy NPC once order process is done
-                if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
-                {
-                    Destroy(gameObject);
-                    NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
-                    NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
-                    //NPC_Manager.Instance.totalNumNPCs--;
-                }
-                break;
+                    // destroy NPC once order process is done
+                    if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+                    {
+                        Destroy(gameObject);
+                        NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
+                        NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
+                        //NPC_Manager.Instance.totalNumNPCs--;
+                    }
+                    break;
+            }
         }
     }
 

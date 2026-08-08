@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(canMove)
+        if(canMove && !RoundManager.Instance.isRoundOver)
             rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
     } 
 }

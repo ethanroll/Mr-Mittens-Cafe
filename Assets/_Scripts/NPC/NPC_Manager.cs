@@ -32,7 +32,7 @@ public class NPC_Manager : MonoBehaviour
 
     IEnumerator SpawnSystem()
     {
-        while (true)
+        while (!RoundManager.Instance.isRoundOver)
         {
             if (totalNumNPCs < numNPC_Cap)
             {

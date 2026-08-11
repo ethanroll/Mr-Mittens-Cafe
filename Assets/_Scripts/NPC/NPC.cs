@@ -7,13 +7,26 @@ public class NPC : MonoBehaviour, IInteractable
 {
     private NPC_Movement movement;  // reference to npc movement
 
+    [SerializeField] private Transform exitPoint;
+    [SerializeField] private float speed = 5f;
+
+    public List<Item> requestedItems = new List<Item>();
+    public List<bool> requestedItemsGiven = new List<bool>(); // bool val corresponding to if item was given
+
     public int NPC_Number;  // store what number the npc is
+    private float startWaitTime = 10f;    // how long npc will wait
+    private float endWaitTime = 20f;
+
+    private bool givingOrder = false;
+    private bool orderReceived = false;
+    public bool startTimeExceeded = false;
+    public bool endTimeExceeded = false;
+
     private Drink drink;
     private Food food;
     public bool orderGiven = false;
     
-    public List<Item> requestedItems = new List<Item>();
-    public List<bool> requestedItemsGiven = new List<bool>(); // bool val corresponding to if item was given
+
 
     void Awake()
     {
@@ -25,6 +38,41 @@ public class NPC : MonoBehaviour, IInteractable
             gameObject.AddComponent<SpriteSorter>();
         }
     }
+
+
+    void Update()
+    {
+        if (!givingOrder && (movement.currentState == NPC_Movement.NPC_State.WalkToCounter || movement.currentState == NPC_Movement.NPC_State.WaitAtCounter || movement.currentState == NPC_Movement.NPC_State.InQueue))
+        {
+            if (startWaitTime > 0)
+            {
+                startWaitTime -= Time.deltaTime;
+
+                if (startWaitTime < 0)
+                    startWaitTime = 0;
+            }
+            else
+            {
+                startTimeExceeded = true;
+            }
+        }
+
+        else if (!orderReceived && (movement.currentState == NPC_Movement.NPC_State.WaitForPickup))
+        {
+            if (endWaitTime > 0)
+            {
+                endWaitTime -= Time.deltaTime;
+
+                if (endWaitTime < 0)
+                    endWaitTime = 0;
+            }
+            else
+            {
+                endTimeExceeded = true;
+            }
+        }
+    }
+
 
     public bool CanInteract()
     {
@@ -43,6 +91,7 @@ public class NPC : MonoBehaviour, IInteractable
 
         else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
         {
+            givingOrder = true;
             drink = new Drink();
 
             // if have food
@@ -58,6 +107,7 @@ public class NPC : MonoBehaviour, IInteractable
 
             if (CheckOrder(currentItem))
             {
+                orderReceived = true;
                 ToastManager.Instance.DisplayInteraction("Thank you!");
                 movement.OrderReceived();  // NPC leaves
             }

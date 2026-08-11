@@ -7,7 +7,7 @@ public class RoundManager : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI TimerText;
 
-    private float timeLimit = 5f;
+    private float timeLimit = 60f;
     public bool isRoundOver = false;
 
     private float mins;

@@ -4,18 +4,17 @@ public class NPC_Movement : MonoBehaviour
 {
     private NPC npc; // reference to NPC
 
-    public enum NPC_State { Spawn, WalkToCounter, InQueue, WaitForQueue, WaitAtCounter, WalkToPickup, WaitForPickup, OrderReceived };
+    public enum NPC_State { Spawn, WalkToCounter, InQueue, WaitForQueue, WaitAtCounter, WalkToPickup, WaitForPickup, OrderReceived, Leave };
 
     [SerializeField] public Transform[] waypoints = new Transform[3];// where NPC go next
     [SerializeField] private float speed = 5f;
 
-    private NPC_State currentState = NPC_State.Spawn; // starting state
-    private Transform targetWaypoint;
+    public NPC_State currentState = NPC_State.Spawn; // starting state
+    public Transform targetWaypoint;
 
-    private int currentWaypointIndex = 0;
+    public int currentWaypointIndex = 0;
     private int assignedQueueIndex = -1;
     private int assignedTableIndex = -1;
-    private bool orderGiven = false;
 
     // change later
     private bool haveJoinedList = false;
@@ -28,7 +27,7 @@ public class NPC_Movement : MonoBehaviour
 
     void Update()
     {
-        if (!RoundManager.Instance.isRoundOver)
+        if (!RoundManager.Instance.isRoundOver && !npc.startTimeExceeded && !npc.endTimeExceeded)
         {
             switch (currentState)
             {
@@ -113,12 +112,44 @@ public class NPC_Movement : MonoBehaviour
                     // destroy NPC once order process is done
                     if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
                     {
-                        Destroy(gameObject);
+                        NPC_Manager.Instance.NPC_List.Remove(npc);
                         NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
                         NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
-                        //NPC_Manager.Instance.totalNumNPCs--;
+                        Destroy(gameObject);
                     }
                     break;
+            }
+        }
+
+        // if npc time limit exceeded
+        else if (npc.startTimeExceeded || npc.endTimeExceeded)
+        {
+            currentWaypointIndex = 2;
+            targetWaypoint = waypoints[currentWaypointIndex];
+            transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
+
+            // remove from current state list
+            if (currentState == NPC_State.WaitAtCounter)
+            {
+                NPC_QueueManager.Instance.counterOccupied = false;
+                currentState = NPC_State.Leave;
+            }
+            else if (currentState == NPC_State.InQueue)
+            {
+                NPC_QueueManager.Instance.LeaveLine(npc);
+                currentState = NPC_State.Leave;
+            }
+            else if (currentState == NPC_State.WaitForPickup)
+            {
+                NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
+                NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
+                currentState = NPC_State.Leave;
+            }
+
+            if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
+            {
+                NPC_Manager.Instance.NPC_List.Remove(npc);
+                Destroy(gameObject);
             }
         }
     }

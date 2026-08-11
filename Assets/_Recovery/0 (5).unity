@@ -2239,8 +2239,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 936939159}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.18, y: 6.31, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 29.18, y: 6.3100004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2687,7 +2687,6 @@ GameObject:
   - component: {fileID: 1153850247}
   - component: {fileID: 1153850248}
   - component: {fileID: 1153850249}
-  - component: {fileID: 1153850250}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2752,7 +2751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22b8a9ec189cf804eb89d03f9154dac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPC_Manager
-  NPC_List: []
   prefab: {fileID: 5427843598351199950, guid: 4f4a30b4381d4b24c9f7355abe4a9fd1, type: 3}
   spawnPoint: {fileID: 1251385890}
   waypointContainer: {fileID: 1796318926}
@@ -2817,18 +2815,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundManager
   TimerText: {fileID: 1602156467}
   isRoundOver: 0
---- !u!114 &1153850250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1153850241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e888ee959fd28344abf7e28c0dd90c53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PointManager
 --- !u!1 &1179536660
 GameObject:
   m_ObjectHideFlags: 0
@@ -5210,8 +5196,8 @@ SceneRoots:
   - {fileID: 1494360090}
   - {fileID: 1449468516}
   - {fileID: 463883296}
-  - {fileID: 1215011105}
   - {fileID: 936939163}
+  - {fileID: 1215011105}
   - {fileID: 1796318926}
   - {fileID: 1780064300}
   - {fileID: 1852840940}

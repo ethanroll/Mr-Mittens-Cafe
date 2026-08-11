@@ -9,15 +9,13 @@ public class NPC_Manager : MonoBehaviour
 
     public static NPC_Manager Instance;
 
-    //List<NPC> NPC_List = new List<NPC>();
-    //[SerializeField] public Transform[] queueSpots = new Transform[4]; // store queue spots
+    public List<NPC> NPC_List = new List<NPC>();
 
     [SerializeField] public NPC prefab; 
     [SerializeField] public Transform spawnPoint;    // where NPCs spawn
     [SerializeField] public Transform waypointContainer;
 
-    //public NPC currentNPC;  // store current NPC
-    public int totalNumNPCs = 0;    // store how many NPCs are currently in the game
+    public int totalNumNPCs = 0;    // store how many NPCs were spawned total in the game
     public int numNPC_Cap = 20;    // npc cap for the day
 
     void Awake()
@@ -46,13 +44,12 @@ public class NPC_Manager : MonoBehaviour
 
                 newNPC.NPC_Number = totalNumNPCs;
                 totalNumNPCs++;
-                
-                //OrderManager.Instance.willOrderFood = OrderManager.Instance.foodSchedule[totalNumNPCs - 1];
+                NPC_List.Add(newNPC);
 
                 NPC_Movement movement = newNPC.GetComponent<NPC_Movement>();
                 movement.waypoints = waypointContainer.Cast<Transform>().ToArray();
 
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(5f);
             }            
         }
     }

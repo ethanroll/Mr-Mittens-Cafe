@@ -83,7 +83,7 @@ public class HotbarManager : MonoBehaviour
                 }
 
                 if (currentHotbarSlot != null)
-                    GetCurrentItemName(currentHotbarSlot);
+                    ToastManager.Instance.DisplayEquippedItem(GetCurrentItemName(currentHotbarSlot));
                     //printCurrentSlot(currentHotbarSlot);
             }
             else if (Keyboard.current[hotbarKeys[i]].wasPressedThisFrame && drinkIsBusy)
@@ -119,7 +119,7 @@ public class HotbarManager : MonoBehaviour
 
             if (drink.temperature == Temperature.Iced)
             {
-                output += " Iced ";
+                output += " Cold ";
                 hasIce = true;
             }
             else
@@ -142,7 +142,7 @@ public class HotbarManager : MonoBehaviour
                 if (drink.hasWater) output += " with water";
             }
 
-            if (hasIce)
+            if (drink.iceLevel != null)
             {
                 output += " with " + drink.iceLevel + " ice";
             }

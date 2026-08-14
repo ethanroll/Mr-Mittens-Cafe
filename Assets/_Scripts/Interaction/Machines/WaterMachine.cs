@@ -1,14 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-public class WaterMachine : MonoBehaviour, IInteractable, IPromptable
+public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IPromptable
 {
     [SerializeField] private Sprite WaterMahineIcon;
-    private string promptMessage = "Would you like to add water?";
-    private string[] responses = new string[] { "Yes", "No" };
+    [SerializeField] private GameObject machineFocusParent;
+    [SerializeField] private GameObject waterMachineUI;
+
+    //private string promptMessage = "Would you like to add water?";
+    //private string[] responses = new string[] { "Yes", "No" };
 
     private Drink currentDrink; // store drink at current hotbar slot
-    private bool responseYes;
+    //private bool responseYes;
+
+    void Update()
+    {
+
+    }
 
     public bool CanInteract()
     {
@@ -19,14 +27,23 @@ public class WaterMachine : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
+
         if(currentItem is Drink drink && HotbarManager.Instance.hasSlot)
         {
             if(!drink.hasWater) // check if cup is a mug and can take water
             {
+                MachineFocusManager.Instance.SetCurrentMachine(this);   // give machinefocusmanager a reference to itself
+
                 currentDrink = drink;   // store reference for CheckResponse to use
 
-                InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
-                InteractionPromptManager.Instance.LoadPrompt(this);
+                // start pouring water minigame
+                machineFocusParent.SetActive(true);
+                waterMachineUI.SetActive(true);
+
+                PlayerMovement.Instance.canMove = false;
+
+                //InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
+                //InteractionPromptManager.Instance.LoadPrompt(this);
             }
             else
             {
@@ -39,6 +56,31 @@ public class WaterMachine : MonoBehaviour, IInteractable, IPromptable
         }
     }
 
+    public void ActionFinished()
+    {
+        // wait til player done interacting
+        if (WaterMachineClick.Instance.finishedPouring)
+        {
+            currentDrink.hasWater = true;
+            ToastManager.Instance.DisplayInteraction("Finished Pouring water into the cup.");
+        }
+    }
+
+    // if press esc
+    public void OnFocusExit()
+    {
+        // reset values for watermachineclick
+        WaterMachineClick.Instance.ResetValues();
+
+        // remove UI
+        machineFocusParent.SetActive(false);
+        waterMachineUI.SetActive(false);
+        PlayerMovement.Instance.canMove = true;
+    }
+
+
+
+    // NOT NEEDED ANYMORE
     public void PromptFinished()
     {
         StartCoroutine(PourWater());

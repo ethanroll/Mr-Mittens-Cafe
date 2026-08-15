@@ -139,7 +139,7 @@ public class HotbarManager : MonoBehaviour
 
                 if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
                 if (drink.milkType != null) output += " with " + drink.milkType + " milk";
-                if (drink.hasWater) output += " with water";
+                if (drink.waterFilled) output += " with water";
             }
 
             if (drink.iceLevel != null)
@@ -163,14 +163,14 @@ public class HotbarManager : MonoBehaviour
     private void AssignSpecialDrink(Drink drink)
     {
         // Espresso
-        if (drink.milkType == null && drink.numEspressoShots == 2 && !drink.hasWater)
+        if (drink.milkType == null && drink.numEspressoShots == 2 && !drink.waterFilled)
         {
             drink.drinkType = DrinkType.Espresso;
             isSpecialDrink = true;
         }
 
         // Americano
-        else if (drink.milkType == null && (drink.numEspressoShots == 1 || drink.numEspressoShots == 2) && drink.hasWater)
+        else if (drink.milkType == null && (drink.numEspressoShots == 1 || drink.numEspressoShots == 2) && drink.waterFilled)
         {
             drink.drinkType = DrinkType.Americano;
             isSpecialDrink = true;

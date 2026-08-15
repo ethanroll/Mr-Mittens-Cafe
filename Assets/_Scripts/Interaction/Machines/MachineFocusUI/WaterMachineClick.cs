@@ -37,13 +37,31 @@ public class WaterMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpH
         // check when mouse is held and for how long
         if (mouseHeld && !finishedPouring)
         {
-            mouseHeldTimer += Time.deltaTime;
+            Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot();
 
-            if (mouseHeldTimer >= holdTimeLimit)
+            if (currentItem is Drink drink && HotbarManager.Instance.hasSlot)
             {
-                finishedPouring = true;
-                waterMachine.ActionFinished();
+                mouseHeldTimer = drink.waterFillProgress * holdTimeLimit;  // start where left off if drink already has some water    
+
+                mouseHeldTimer += Time.deltaTime;
+
+                // calculate for filling bar
+                float progress = mouseHeldTimer / holdTimeLimit;
+                ProgressBarManager.Instance.FillBar(progress);
+                drink.waterFillProgress = progress;
+
+                if (mouseHeldTimer >= holdTimeLimit)
+                {
+                    finishedPouring = true;
+                    ProgressBarManager.Instance.FillBar(progress);
+                    waterMachine.ActionFinished();
+                }
             }
+        }
+
+        else if (mouseHeld && finishedPouring)
+        {
+            ToastManager.Instance.DisplayInteraction("Cup already has enough water!");
         }
     }
 

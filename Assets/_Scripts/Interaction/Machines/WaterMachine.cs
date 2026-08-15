@@ -30,15 +30,19 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
 
         if(currentItem is Drink drink && HotbarManager.Instance.hasSlot)
         {
-            if(!drink.hasWater) // check if cup is a mug and can take water
+            if(!drink.waterFilled) // check if cup is a mug and can take water
             {
                 MachineFocusManager.Instance.SetCurrentMachine(this);   // give machinefocusmanager a reference to itself
 
                 currentDrink = drink;   // store reference for CheckResponse to use
 
                 // start pouring water minigame
+                ToastManager.Instance.DisplayInteraction("Hold the button to begin pouring water.");
                 machineFocusParent.SetActive(true);
                 waterMachineUI.SetActive(true);
+
+                ProgressBarManager.Instance.SetProgressBarActive();
+                ProgressBarManager.Instance.SetBarAmount(drink.waterFillProgress);
 
                 PlayerMovement.Instance.canMove = false;
 
@@ -61,7 +65,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         // wait til player done interacting
         if (WaterMachineClick.Instance.finishedPouring)
         {
-            currentDrink.hasWater = true;
+            currentDrink.waterFilled = true;
             ToastManager.Instance.DisplayInteraction("Finished Pouring water into the cup.");
         }
     }
@@ -75,6 +79,10 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         // remove UI
         machineFocusParent.SetActive(false);
         waterMachineUI.SetActive(false);
+
+        ProgressBarManager.Instance.SetProgressBarInactive();
+        ProgressBarManager.Instance.SetBarAmount(0f);
+
         PlayerMovement.Instance.canMove = true;
     }
 
@@ -91,11 +99,11 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         switch (capturedResponse)
         {
             case "Yes": 
-                currentDrink.hasWater = true;
+                currentDrink.waterFilled = true;
                 break;
 
             case "No": 
-                currentDrink.hasWater = false;
+                currentDrink.waterFilled = false;
                 break;
         }
     }

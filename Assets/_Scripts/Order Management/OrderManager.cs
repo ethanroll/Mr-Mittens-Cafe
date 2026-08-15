@@ -69,7 +69,7 @@ public class OrderManager : MonoBehaviour
         if (milkOrWater == 0)
             drink.milkType = GetRandomEnumValue<MilkType>(); 
         else
-            drink.hasWater = true;
+            drink.waterFilled = true;
 
         HotbarManager.Instance.GetCurrentItemName(drink);
         return drink;

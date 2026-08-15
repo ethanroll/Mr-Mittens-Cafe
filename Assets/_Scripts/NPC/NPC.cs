@@ -131,7 +131,7 @@ public class NPC : MonoBehaviour, IInteractable
                 && drinkOrder.temperature == currentDrink.temperature
                 && drinkOrder.milkType == currentDrink.milkType
                 && drinkOrder.iceLevel == currentDrink.iceLevel
-                && drinkOrder.hasWater == currentDrink.hasWater)
+                && drinkOrder.waterFilled == currentDrink.waterFilled)
                 {
                     isCorrectItem = true;
                     requestedItemsGiven[i] = isCorrectItem;

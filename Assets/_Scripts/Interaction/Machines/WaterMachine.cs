@@ -7,16 +7,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject waterMachineUI;
 
-    //private string promptMessage = "Would you like to add water?";
-    //private string[] responses = new string[] { "Yes", "No" };
-
     private Drink currentDrink; // store drink at current hotbar slot
-    //private bool responseYes;
-
-    void Update()
-    {
-
-    }
 
     public bool CanInteract()
     {
@@ -40,14 +31,12 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
                 ToastManager.Instance.DisplayInteraction("Hold the button to begin pouring water.");
                 machineFocusParent.SetActive(true);
                 waterMachineUI.SetActive(true);
+                MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
 
                 ProgressBarManager.Instance.SetProgressBarActive();
                 ProgressBarManager.Instance.SetBarAmount(drink.waterFillProgress);
 
                 PlayerMovement.Instance.canMove = false;
-
-                //InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
-                //InteractionPromptManager.Instance.LoadPrompt(this);
             }
             else
             {
@@ -70,7 +59,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         }
     }
 
-    // if press esc
+    // if press esc or press cancel
     public void OnFocusExit()
     {
         // reset values for watermachineclick
@@ -79,47 +68,11 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         // remove UI
         machineFocusParent.SetActive(false);
         waterMachineUI.SetActive(false);
+        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
         ProgressBarManager.Instance.SetBarAmount(0f);
 
-        PlayerMovement.Instance.canMove = true;
-    }
-
-
-
-    // NOT NEEDED ANYMORE
-    public void PromptFinished()
-    {
-        StartCoroutine(PourWater());
-    }
-
-    public void CheckResponse(string capturedResponse)
-    {
-        switch (capturedResponse)
-        {
-            case "Yes": 
-                currentDrink.waterFilled = true;
-                break;
-
-            case "No": 
-                currentDrink.waterFilled = false;
-                break;
-        }
-    }
-
-    private IEnumerator PourWater()
-    {
-        // FIX LATER SINCE DATA IS ALREADY ADDED BEFORE BREWING IE IF PLAAYER WALKS AWAY OR CANCELS ETC
-        HotbarManager.Instance.drinkIsBusy = true;
-        PlayerMovement.Instance.canMove = false;
-
-        ToastManager.Instance.DisplayInteraction("Pouring water into the cup.");
-        yield return new WaitForSeconds(4f);
-        ToastManager.Instance.DisplayInteraction("Finished Pouring water into the cup.");
-        HotbarManager.Instance.GetCurrentItemName(currentDrink);
-
-        HotbarManager.Instance.drinkIsBusy = false;
         PlayerMovement.Instance.canMove = true;
     }
 }

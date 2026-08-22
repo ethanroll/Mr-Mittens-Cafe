@@ -10,12 +10,11 @@ public class NPC : MonoBehaviour, IInteractable
     [SerializeField] private Transform exitPoint;
     [SerializeField] private float speed = 5f;
 
-    public List<Item> requestedItems = new List<Item>();
-    public List<bool> requestedItemsGiven = new List<bool>(); // bool val corresponding to if item was given
-
     public int NPC_Number;  // store what number the npc is
     private float startWaitTime = 10f;    // how long npc will wait
     private float endWaitTime = 20f;
+
+    public Order CurrentOrder { get; private set; }
 
     private bool givingOrder = false;
     private bool orderReceived = false;
@@ -25,7 +24,7 @@ public class NPC : MonoBehaviour, IInteractable
     private Drink drink;
     private Food food;
     public bool orderGiven = false;
-    
+
 
 
     void Awake()
@@ -38,7 +37,6 @@ public class NPC : MonoBehaviour, IInteractable
             gameObject.AddComponent<SpriteSorter>();
         }
     }
-
 
     void Update()
     {
@@ -73,6 +71,10 @@ public class NPC : MonoBehaviour, IInteractable
         }
     }
 
+    public void AssignOrder(Order order)
+    {
+        CurrentOrder = order;
+    }
 
     public bool CanInteract()
     {
@@ -91,17 +93,20 @@ public class NPC : MonoBehaviour, IInteractable
 
         else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
         {
+            // start dialogue when initiating order and generate order
             givingOrder = true;
-            drink = new Drink();
 
-            // if have food
+            drink = new Drink();
             food = new Food();
 
+            // store new order
+            Order newOrder = OrderManager.Instance.GenerateRandomOrder(this, drink, food);
+            AssignOrder(newOrder);
+
             StartCoroutine(OrderDialogue());
-            OrderManager.Instance.GenerateRandomOrder(this, drink, food);
         }
 
-        else if(orderGiven)
+        else if (orderGiven)
         {
             Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
 
@@ -120,12 +125,12 @@ public class NPC : MonoBehaviour, IInteractable
 
     private bool CheckOrder(Item currentOrder)
     {
-        for (int i = 0; i < requestedItems.Count; i++)
+        for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
         {
-            Item requestedItem = requestedItems[i];
+            Item requestedItem = CurrentOrder.requestedItems[i];
             bool isCorrectItem = false;
 
-            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink && !requestedItemsGiven[i])
+            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink && !CurrentOrder.requestedItemsGiven[i])
             {
                 if (drinkOrder.cupSize == currentDrink.cupSize
                 && drinkOrder.temperature == currentDrink.temperature
@@ -134,27 +139,28 @@ public class NPC : MonoBehaviour, IInteractable
                 && drinkOrder.waterFilled == currentDrink.waterFilled)
                 {
                     isCorrectItem = true;
-                    requestedItemsGiven[i] = isCorrectItem;
+                    CurrentOrder.requestedItemsGiven[i] = isCorrectItem;
                     HotbarManager.Instance.RemoveFromHotbar();
                 }
             }
 
-            if (requestedItem is Food foodOrder && currentOrder is Food currentFood && !requestedItemsGiven[i])
+            if (requestedItem is Food foodOrder && currentOrder is Food currentFood && !CurrentOrder.requestedItemsGiven[i])
             {
-                if (foodOrder.pastryType == currentFood.pastryType) {
+                if (foodOrder.pastryType == currentFood.pastryType)
+                {
                     isCorrectItem = true;
-                    requestedItemsGiven[i] = isCorrectItem;
+                    CurrentOrder.requestedItemsGiven[i] = isCorrectItem;
                     HotbarManager.Instance.RemoveFromHotbar();
-                }                 
+                }
                 // add savory later
             }
         }
 
         // check if all incdices are true for requestedItemsGiven list
-        bool allTrue = requestedItemsGiven.All(x => x);
+        bool allTrue = CurrentOrder.requestedItemsGiven.All(x => x);
         return allTrue;
     }
-    
+
 
     private IEnumerator OrderDialogue()
     {
@@ -167,6 +173,8 @@ public class NPC : MonoBehaviour, IInteractable
 
         PlayerMovement.Instance.canMove = true;
         movement.OrderGiven(); // NPC walks to next counter
+
+        OrderTrackingUI.Instance.AddTicket(this);  // add to ticket for UI
     }
 
     private IEnumerator SayOrder()
@@ -177,9 +185,9 @@ public class NPC : MonoBehaviour, IInteractable
             yield return new WaitForSeconds(2f);
         }
 
-        for (int i = 0; i < requestedItems.Count; i++)
+        for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
         {
-            Item currentItem = requestedItems[i];
+            Item currentItem = CurrentOrder.requestedItems[i];
             if (currentItem is Drink drink)
             {
                 ToastManager.Instance.DisplayInteraction(HotbarManager.Instance.GetCurrentItemName(drink));
@@ -208,10 +216,10 @@ public class NPC : MonoBehaviour, IInteractable
     {
         List<string> details = new List<string>();
 
-        for (int i = 0; i < requestedItems.Count; i++)
+        for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
         {
-            Item item = requestedItems[i];
-            bool isDelivered = i < requestedItemsGiven.Count && requestedItemsGiven[i];
+            Item item = CurrentOrder.requestedItems[i];
+            bool isDelivered = i < CurrentOrder.requestedItemsGiven.Count && CurrentOrder.requestedItemsGiven[i];
 
             string itemName = HotbarManager.Instance != null ? HotbarManager.Instance.GetCurrentItemName(item) : item.itemName;
             string statusTag = isDelivered ? "<color=#00FF00>[Delivered]</color>" : "<color=#FFA500>[Pending]</color>";
@@ -222,6 +230,3 @@ public class NPC : MonoBehaviour, IInteractable
         return details;
     }
 }
-
-
-

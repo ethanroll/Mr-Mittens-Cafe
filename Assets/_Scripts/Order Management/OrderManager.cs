@@ -10,6 +10,7 @@ public class OrderManager : MonoBehaviour
     public static OrderManager Instance;
     private List<Order> orders = new List<Order>();    // store all orders
     public List<bool> foodSchedule = new List<bool>(); // store if NPC will order food
+    public List<bool> orderGiven = new List<bool>();   // store if order was given
 
     private int milkOrWater;    // store whether milk or water liquid will be chosen
 
@@ -20,7 +21,7 @@ public class OrderManager : MonoBehaviour
 
     public void Awake()
     {
-        npc = GetComponent<NPC>();  // MIGHT NOT BE NEEDED ANYMORE
+        // npc = GetComponent<NPC>();  // MIGHT NOT BE NEEDED ANYMORE
         Instance = this;
     }
 
@@ -29,26 +30,27 @@ public class OrderManager : MonoBehaviour
          PopulateFoodSchedule();
     }
 
-    public void GenerateRandomOrder(NPC npc, Drink drink, Food food)
+    public Order GenerateRandomOrder(NPC npc, Drink drink, Food food)
     {
-        //Order generatedOrder = new Order();
+        Order npcOrder = new Order(); // store order
 
         // fill out NPC order details
         drink = GenerateRandomDrink(drink);
-        npc.requestedItems.Add(drink);
+        npcOrder.requestedItems.Add(drink);
 
         // chance for a food item
         if (npc.WillOrderFood())
         {
             food = GenerateRandomFood(food);
-            npc.requestedItems.Add(food);
+            npcOrder.requestedItems.Add(food);
         }
 
         // populate requestedItemsGiven
-        for (int i = 0; i < npc.requestedItems.Count; i++)
+        for (int i = 0; i < npcOrder.requestedItems.Count; i++)
         {
-            npc.requestedItemsGiven.Add(false);
+            npcOrder.requestedItemsGiven.Add(false); // all false to start i.e food not given yet
         }
+        return npcOrder;
     }
 
     public Drink GenerateRandomDrink(Drink drink)
@@ -123,11 +125,17 @@ public class OrderManager : MonoBehaviour
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
 
-    /// <summary>
-    /// Returns all NPCs in the scene who currently have active placed orders.
-    /// </summary>
-    public List<NPC> GetActiveNPCsWithOrders()
+    // get a list of all the active NPCs orders
+    public void GetActiveNPCsWithOrders()
     {
+
+
+
+
+
+
+
+        /*
         List<NPC> activeNPCs = new List<NPC>();
 
 #if UNITY_2023_1_OR_NEWER
@@ -144,7 +152,7 @@ public class OrderManager : MonoBehaviour
         }
 
         activeNPCs.Sort((a, b) => a.NPC_Number.CompareTo(b.NPC_Number));
-        return activeNPCs;
-    }
+        return activeNPCs; */
+    } 
 }
 

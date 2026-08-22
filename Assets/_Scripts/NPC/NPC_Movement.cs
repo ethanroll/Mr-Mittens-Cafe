@@ -112,7 +112,10 @@ public class NPC_Movement : MonoBehaviour
                     // destroy NPC once order process is done
                     if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
                     {
-                        NPC_Manager.Instance.NPC_List.Remove(npc);
+                        // NPC_Manager.Instance.NPC_List.Remove(npc);
+                        NPC_Manager.Instance.totalNumNPCs--;
+                        NPC_Manager.Instance.activeNPCs.Remove(npc);
+
                         NPC_PickupManager.Instance.NPC_WaitingAtTables.Remove(npc);
                         NPC_PickupManager.Instance.tableOccupied[assignedTableIndex] = false;
                         Destroy(gameObject);

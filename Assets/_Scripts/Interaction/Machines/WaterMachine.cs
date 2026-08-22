@@ -54,6 +54,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         // wait til player done interacting
         if (WaterMachineClick.Instance.finishedPouring)
         {
+            //PointManager.Instance.AddScore(10); // add points
             currentDrink.waterFilled = true;
             ToastManager.Instance.DisplayInteraction("Finished Pouring water into the cup.");
         }

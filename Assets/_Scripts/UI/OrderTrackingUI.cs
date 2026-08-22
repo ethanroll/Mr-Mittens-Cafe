@@ -8,8 +8,27 @@ using UnityEngine.UI;
 /// Controls the Order Tracking UI popup window toggled by pressing the 'R' key.
 /// Displays active customer orders, requested items, and fulfillment status across a spacious modal UI panel.
 /// </summary>
+
+
 public class OrderTrackingUI : MonoBehaviour
 {
+    public static OrderTrackingUI Instance;
+
+    [SerializeField] private Transform ticketParent;
+    [SerializeField] private GameObject ticketPrefab;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    // add ticker per NPC
+    public void AddTicket(NPC npc)
+    {
+        GameObject go = Instantiate(ticketPrefab, ticketParent);
+        go.GetComponent<OrderTicketUI>().Setup(npc);
+    }
+    /*
     public static OrderTrackingUI Instance { get; private set; }
 
     [Header("UI Panels & Containers")]
@@ -300,4 +319,5 @@ public class OrderTrackingUI : MonoBehaviour
         string details = string.Join("\n", itemLines);
         return header + details;
     }
+    */ 
 }

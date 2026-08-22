@@ -9,13 +9,14 @@ public class NPC_Manager : MonoBehaviour
 
     public static NPC_Manager Instance;
 
-    public List<NPC> NPC_List = new List<NPC>();
+    public List<NPC> NPC_List = new List<NPC>();    // store all NPCs that ever existed
+    public List<NPC> activeNPCs = new List<NPC>();
 
     [SerializeField] public NPC prefab; 
     [SerializeField] public Transform spawnPoint;    // where NPCs spawn
     [SerializeField] public Transform waypointContainer;
 
-    public int totalNumNPCs = 0;    // store how many NPCs were spawned total in the game
+    public int totalNumNPCs = 0;    // store how many NPCs are currently in the game
     public int numNPC_Cap = 20;    // npc cap for the day
 
     void Awake()
@@ -32,7 +33,7 @@ public class NPC_Manager : MonoBehaviour
     {
         while (!RoundManager.Instance.isRoundOver)
         {
-            if (totalNumNPCs < numNPC_Cap)
+            if (NPC_List.Count < numNPC_Cap)
             {
                 if (NPC_QueueManager.Instance.IsNPC_StartQueueFull())
                 {
@@ -42,9 +43,11 @@ public class NPC_Manager : MonoBehaviour
 
                 NPC newNPC = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
 
-                newNPC.NPC_Number = totalNumNPCs;
+                newNPC.NPC_Number = NPC_List.Count;
+
                 totalNumNPCs++;
                 NPC_List.Add(newNPC);
+                activeNPCs.Add(newNPC);
 
                 NPC_Movement movement = newNPC.GetComponent<NPC_Movement>();
                 movement.waypoints = waypointContainer.Cast<Transform>().ToArray();

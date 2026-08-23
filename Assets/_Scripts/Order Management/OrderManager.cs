@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.InputSystem;      // REMOVEEEEEE!
 
 public class OrderManager : MonoBehaviour
 {
@@ -19,6 +21,8 @@ public class OrderManager : MonoBehaviour
     private int numOrderingFood = 0;
     private int foodOrderQuota = 5;
 
+    private NPC currentNPC;
+
     public void Awake()
     {
         // npc = GetComponent<NPC>();  // MIGHT NOT BE NEEDED ANYMORE
@@ -29,6 +33,19 @@ public class OrderManager : MonoBehaviour
     {
          PopulateFoodSchedule();
     }
+
+
+    // REMOVE
+    void Update()
+    {
+        if (Keyboard.current[Key.R].wasPressedThisFrame)
+        {
+            PrintAllActiveOrders();
+        }
+    }
+
+
+
 
     public Order GenerateRandomOrder(NPC npc, Drink drink, Food food)
     {
@@ -123,6 +140,61 @@ public class OrderManager : MonoBehaviour
     {
         System.Array values = System.Enum.GetValues(typeof(T));
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
+    }
+
+    // print out list of all active orders (debug log for now)
+    public void PrintAllActiveOrders()
+    {
+        StringBuilder sb = new StringBuilder();
+        if (NPC_Manager.Instance.activeNPCs.Count != 0)
+        {      
+            // get order for each npc
+            for (int i = 0; i < NPC_Manager.Instance.activeNPCs.Count; i++)
+            {
+                currentNPC = NPC_Manager.Instance.activeNPCs[i];
+
+                // only show NPCs whose order has actually been taken
+                if (!currentNPC.orderGiven)
+                {
+                    continue;
+                }
+
+                // check if any orders were taken yet
+                if (currentNPC.CurrentOrder == null)
+                {
+                    Debug.Log("No orders");
+                    continue;
+                }
+
+                sb.AppendLine($"NPC number: {currentNPC.NPC_Number}:");
+
+                // iterate if npc has more than one item for order
+                for (int j = 0; j < currentNPC.CurrentOrder.requestedItems.Count; j++)
+                {
+                    Item currentItem = currentNPC.CurrentOrder.requestedItems[j];
+
+                    if (currentItem is Drink drink)
+                    {
+                        sb.AppendLine($"   - {HotbarManager.Instance.GetCurrentItemName(drink)}");
+                    }
+                    if (currentItem is Food food)
+                    {
+                        sb.AppendLine($"   - {HotbarManager.Instance.GetCurrentItemName(food)}");
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("No orders");
+        }
+
+        Debug.Log(sb.ToString());
+    }
+
+    private void GetNpcOrder()
+    {
+        
     }
 
     // get a list of all the active NPCs orders

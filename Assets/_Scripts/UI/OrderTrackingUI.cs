@@ -12,10 +12,10 @@ using UnityEngine.UI;
 
 public class OrderTrackingUI : MonoBehaviour
 {
-    public static OrderTrackingUI Instance;
+    //public static OrderTrackingUI Instance;
 
-    [SerializeField] private Transform ticketParent;
-    [SerializeField] private GameObject ticketPrefab;
+    /*/[SerializeField] private Transform ticketParent;
+    //[SerializeField] private GameObject ticketPrefab;
 
     void Awake()
     {
@@ -28,6 +28,8 @@ public class OrderTrackingUI : MonoBehaviour
         GameObject go = Instantiate(ticketPrefab, ticketParent);
         go.GetComponent<OrderTicketUI>().Setup(npc);
     }
+
+     */
     /*
     public static OrderTrackingUI Instance { get; private set; }
 

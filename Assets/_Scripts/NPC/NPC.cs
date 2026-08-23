@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Text; // help w appening string
 
 public class NPC : MonoBehaviour, IInteractable
 {
     private NPC_Movement movement;  // reference to npc movement
 
     [SerializeField] private Transform exitPoint;
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 2.5f;
 
     public int NPC_Number;  // store what number the npc is
     private float startWaitTime = 10f;    // how long npc will wait
@@ -25,7 +26,7 @@ public class NPC : MonoBehaviour, IInteractable
     private Food food;
     public bool orderGiven = false;
 
-
+    public bool canInteract = false;
 
     void Awake()
     {
@@ -40,6 +41,7 @@ public class NPC : MonoBehaviour, IInteractable
 
     void Update()
     {
+        // start npc timer
         if (!givingOrder && (movement.currentState == NPC_Movement.NPC_State.WalkToCounter || movement.currentState == NPC_Movement.NPC_State.WaitAtCounter || movement.currentState == NPC_Movement.NPC_State.InQueue))
         {
             if (startWaitTime > 0)
@@ -78,51 +80,50 @@ public class NPC : MonoBehaviour, IInteractable
 
     public bool CanInteract()
     {
-        return true;
-        // return !IsOpened;
+        return canInteract;
     }
 
 
     // CHANGE SO CANT INTERACT AGAIN WHILE ALREADY INTERACTING
     public void Interact()
     {
-        if (NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
+        if (CanInteract())
         {
-            ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
-        }
-
-        else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
-        {
-            // start dialogue when initiating order and generate order
-            givingOrder = true;
-
-            drink = new Drink();
-            food = new Food();
-
-            // store new order
-            Order newOrder = OrderManager.Instance.GenerateRandomOrder(this, drink, food);
-            AssignOrder(newOrder);
-
-            StartCoroutine(OrderDialogue());
-        }
-
-        else if (orderGiven)
-        {
-            Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-
-            if (CheckOrder(currentItem))
+            if (NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
             {
-                orderReceived = true;
-                ToastManager.Instance.DisplayInteraction("Thank you!");
-                movement.OrderReceived();  // NPC leaves
+                ToastManager.Instance.DisplayInteraction("The tables are full... I should wait til they clear up.");
             }
-            else
+
+            else if (!NPC_PickupManager.Instance.CheckTablesFull() && !orderGiven)
             {
-                StartCoroutine(SayOrder());
+                // start dialogue
+                givingOrder = true;
+                StartCoroutine(OrderDialogue());
             }
+
+            else if (orderGiven)
+            {
+                Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
+
+                if (CheckOrder(currentItem))
+                {
+                    orderReceived = true;
+                    ToastManager.Instance.DisplayInteraction("Thank you!");
+                    movement.OrderReceived();  // NPC leaves
+                }
+                else
+                {
+                    StartCoroutine(SayOrder());
+                }
+            }
+        }
+        else
+        {
+            ToastManager.Instance.DisplayInteraction("I cannot be interacted with right now.");
         }
     }
 
+    // check if order is correct
     private bool CheckOrder(Item currentOrder)
     {
         for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
@@ -161,7 +162,7 @@ public class NPC : MonoBehaviour, IInteractable
         return allTrue;
     }
 
-
+    // dialogue for interaction
     private IEnumerator OrderDialogue()
     {
         PlayerMovement.Instance.canMove = false;
@@ -174,7 +175,7 @@ public class NPC : MonoBehaviour, IInteractable
         PlayerMovement.Instance.canMove = true;
         movement.OrderGiven(); // NPC walks to next counter
 
-        OrderTrackingUI.Instance.AddTicket(this);  // add to ticket for UI
+        //OrderTrackingUI.Instance.AddTicket(this);  // add to ticket for UI
     }
 
     private IEnumerator SayOrder()

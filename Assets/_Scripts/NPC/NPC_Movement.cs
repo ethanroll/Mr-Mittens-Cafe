@@ -36,12 +36,14 @@ public class NPC_Movement : MonoBehaviour
                     break;
 
                 case NPC_State.WalkToCounter:
+                    npc.canInteract = false;
+
                     int counterIdx = Mathf.Min(1, waypoints.Length - 1);    // use index 1 for counter
                     if (counterIdx >= 0 && waypoints.Length > 0)
                     {
                         targetWaypoint = waypoints[counterIdx];
                         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
-
+                        
                         if (Vector2.Distance(transform.position, targetWaypoint.position) < 0.1f)
                         {
                             currentState = NPC_State.WaitAtCounter;
@@ -54,6 +56,8 @@ public class NPC_Movement : MonoBehaviour
                     break;
 
                 case NPC_State.InQueue:
+                    npc.canInteract = false;
+
                     // move through queue if not at counter
                     if (assignedQueueIndex >= 0 && assignedQueueIndex < NPC_QueueManager.Instance.queueSpotsStart.Length)
                     {
@@ -78,9 +82,12 @@ public class NPC_Movement : MonoBehaviour
                     break;
 
                 case NPC_State.WaitAtCounter:
+                    npc.canInteract = true;
                     break;  // just waiting
 
                 case NPC_State.WalkToPickup:
+                    npc.canInteract = false;
+
                     // add npc to tables to wait for order HAVE CHECK LATER IF CANT JOIN
                     if (!haveJoinedList)
                     {
@@ -102,9 +109,12 @@ public class NPC_Movement : MonoBehaviour
                     break;
 
                 case NPC_State.WaitForPickup:
+                    npc.canInteract = true;
                     break;  // just waiting
 
                 case NPC_State.OrderReceived:
+                    npc.canInteract = false;
+
                     // move toward exit
                     targetWaypoint = waypoints[currentWaypointIndex];
                     transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);

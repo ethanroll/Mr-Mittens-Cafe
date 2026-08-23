@@ -42,16 +42,22 @@ public class NPC_Manager : MonoBehaviour
                 }
 
                 NPC newNPC = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
-
                 newNPC.NPC_Number = NPC_List.Count;
 
+                // have order generated for npc
+                Drink drink = new Drink();
+                Food food = new Food();
+                Order newOrder = OrderManager.Instance.GenerateRandomOrder(newNPC, drink, food);
+                newNPC.AssignOrder(newOrder);
+
+                // increment lists
                 totalNumNPCs++;
                 NPC_List.Add(newNPC);
                 activeNPCs.Add(newNPC);
 
+                // have npc move to initial spot
                 NPC_Movement movement = newNPC.GetComponent<NPC_Movement>();
                 movement.waypoints = waypointContainer.Cast<Transform>().ToArray();
-
                 yield return new WaitForSeconds(5f);
             }            
         }

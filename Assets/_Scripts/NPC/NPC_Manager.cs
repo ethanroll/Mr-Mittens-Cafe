@@ -10,7 +10,8 @@ public class NPC_Manager : MonoBehaviour
     public static NPC_Manager Instance;
 
     public List<NPC> NPC_List = new List<NPC>();    // store all NPCs that ever existed
-    public List<NPC> activeNPCs = new List<NPC>();
+    public List<NPC> activeNPCs = new List<NPC>();  // store active NPCs in game
+    public List<NPC> completedNPCs = new List<NPC>();   // store npcs that had order finished NPC_Manager.Instance.completedNPCS
 
     [SerializeField] public NPC prefab; 
     [SerializeField] public Transform spawnPoint;    // where NPCs spawn

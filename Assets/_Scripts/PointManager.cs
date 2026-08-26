@@ -20,4 +20,10 @@ public class PointManager : MonoBehaviour
         score += amount;
         OnScoreChanged?.Invoke(score);
     }
+
+    // check full score of completed order
+    public void CalculatetCompletedOrderScore()
+    {
+
+    }
 }

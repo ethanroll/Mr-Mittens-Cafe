@@ -8,7 +8,15 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     private string promptMessage = "How many shots of espresso would you like to add";
     private string[] responses = new string[] { "One", "Two", "Three" };
 
+    // IMPLEMENT LATER FOR BEAN EVENT
+    // public static event Action<int> OnScoreChanged;
+
     private Drink currentDrink; // store drink at current hotbar slot
+
+    [SerializeField] private int numBeans = 1000; // initial value of espresso beans (will be updated)
+    private int numBeansUsedPerShot = 50;   // for 1 shot usage
+
+    private bool machineEmpty = false;  // value for if numBeans == 0
 
     private int responsesNewLength; // store length of array when already have espresso
 
@@ -21,7 +29,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
     public void Interact()
     {
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
-        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy)
+        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && !machineEmpty)
         {
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {
@@ -47,6 +55,12 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
                 ToastManager.Instance.DisplayInteraction("Drink already has max number of espresso shots");
             }
         }
+
+        else if(currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && machineEmpty)
+        {
+            ToastManager.Instance.DisplayInteraction("No more espresso beans in machine, must refill.");
+        }
+
         else
         {
             ToastManager.Instance.DisplayInteraction("No drink selected");

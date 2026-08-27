@@ -11,6 +11,7 @@ public class OrderManager : MonoBehaviour
 
     public static OrderManager Instance;
     private List<Order> orders = new List<Order>();    // store all orders
+
     public List<bool> foodSchedule = new List<bool>(); // store if NPC will order food
     public List<bool> orderGiven = new List<bool>();   // store if order was given
 

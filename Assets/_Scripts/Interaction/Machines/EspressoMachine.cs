@@ -50,15 +50,16 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
                 InteractionPromptManager.Instance.LoadPrompt(this);
             }
 
+            /*
+            else if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && machineEmpty)
+            {
+                ToastManager.Instance.DisplayInteraction("No more espresso beans in machine, must refill.");
+            } */
+
             else
             {
                 ToastManager.Instance.DisplayInteraction("Drink already has max number of espresso shots");
             }
-        }
-
-        else if(currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && machineEmpty)
-        {
-            ToastManager.Instance.DisplayInteraction("No more espresso beans in machine, must refill.");
         }
 
         else

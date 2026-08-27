@@ -109,7 +109,7 @@ public class NPC : MonoBehaviour, IInteractable
                 {
                     orderReceived = true;
                     ToastManager.Instance.DisplayInteraction("Thank you!");
-                    NPC_Manager.Instance.completedNPCS.Add(this);   // add npc to completed npcs list
+                    NPC_Manager.Instance.completedNPCs.Add(this);   // add npc to completed npcs list
                     movement.OrderReceived();  // NPC leaves
                 }
                 else

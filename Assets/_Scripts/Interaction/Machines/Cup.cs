@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class Cup : MonoBehaviour, IInteractable, IPromptable
 {
-    [SerializeField] private Sprite cupIcon;    // have to change icon for different sizes/type
+    [SerializeField] private Sprite coldCupIcon;    // have to change icon for different sizes/type
+    [SerializeField] private Sprite hotCupIcon;
+
     private string promptMessage1 = "Would you like a cup for iced drinks or hot drinks?";
     private string promptMessage2 = "Would you like a small, medium or, large cup?";
 
@@ -21,12 +23,12 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
     {
         if (!HotbarManager.Instance.IsArrayFull())
         {
+            // prompt user for cup details
             InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage1, responses = responses1 });
             InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage2, responses = responses2 });
-            currentDrink = new Drink();
-            currentDrink.icon = cupIcon;
+            InteractionPromptManager.Instance.LoadPrompt(this); 
 
-            InteractionPromptManager.Instance.LoadPrompt(this);          
+            currentDrink = new Drink();                 
         }
         else
         {
@@ -37,6 +39,7 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
     // add drink when all prompts are done
     public void PromptFinished()
     {
+        SetCupIcon(); 
         HotbarManager.Instance.AddToHotbar(currentDrink);
         Inventory.Instance.Add(currentDrink);
     }
@@ -51,6 +54,23 @@ public class Cup : MonoBehaviour, IInteractable, IPromptable
             case "Medium": currentDrink.cupSize = CupSize.Medium; break;
             case "Large": currentDrink.cupSize = CupSize.Large; break;
             case "XLarge": currentDrink.cupSize = CupSize.XLarge; break;
+        }
+    }
+
+    // set cup icon based on cup details
+    private void SetCupIcon()
+    {
+        if (currentDrink == null) return;
+
+        switch (currentDrink.temperature)
+        {
+            case Temperature.Hot:
+                currentDrink.icon = hotCupIcon;
+                break;
+
+            case Temperature.Iced:
+                currentDrink.icon = coldCupIcon;
+                break;
         }
     }
 }

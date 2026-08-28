@@ -124,9 +124,9 @@ TextureImporter:
       name: Machines_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 32
-        width: 32
+        width: 30
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

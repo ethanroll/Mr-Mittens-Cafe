@@ -3,9 +3,15 @@ using UnityEngine;
 public class IceMachine : MonoBehaviour, IInteractable, IPromptable
 {
     [SerializeField] private Sprite iceMachineIcon;
+
+    private MachineState currentState = MachineState.Idle;
+
     private string promptMessage = "How much ice would you like to fill the cup?";
     private string[] responses = new string[] { "Quarter", "Half", "Regular" };
+
     private Drink currentDrink; // store drink at current hotbar slot
+
+
 
     public bool CanInteract()
     {

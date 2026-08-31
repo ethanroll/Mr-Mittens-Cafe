@@ -7,6 +7,8 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject waterMachineUI;
 
+    // private MachineState currentState = MachineState.Idle;  // starrting state
+
     private Drink currentDrink; // store drink at current hotbar slot
 
     public bool CanInteract()
@@ -27,12 +29,13 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
 
                 currentDrink = drink;   // store reference for CheckResponse to use
 
-                // start pouring water minigame
+                // display water machine UI
                 ToastManager.Instance.DisplayInteraction("Hold the button to begin pouring water.");
                 machineFocusParent.SetActive(true);
                 waterMachineUI.SetActive(true);
                 MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
 
+                // display progress bar
                 ProgressBarManager.Instance.SetProgressBarActive();
                 ProgressBarManager.Instance.SetBarAmount(drink.waterFillProgress);
 

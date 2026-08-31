@@ -20,6 +20,10 @@ public class Drink: Item
 
     public bool waterFilled;
     public float waterFillProgress = 0f;
+
+    public bool milkAdded;
+    public float milkFillProgress = 0f;
+    public bool milkOverflow = false; // store if milk has overflowed out of the cup
 }
 
 public class Food: Item

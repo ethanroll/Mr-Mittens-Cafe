@@ -1,11 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
-public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
+public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrentMachine
 {
-    [SerializeField] private Sprite espressoMachineIcon;
+    [SerializeField] private Sprite milkkDispenserIcon;
+    [SerializeField] private GameObject machineFocusParent;
+    [SerializeField] private GameObject milkDispenserUI;
+
     private string promptMessage = "Which type of milk would you like to add?";
     private string[] responses = new string[] { "Whole", "Skim", "Oat", "Almond", "Soy", "Coconut" };
+
+    public MachineState currentState = MachineState.Idle;  // starrting state
 
     private Drink currentDrink; // store drink at current hotbar slot
 
@@ -22,6 +27,12 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
         {
             if (drink.milkType == null)
             {
+                PlayerMovement.Instance.canMove = false;
+
+                MachineFocusManager.Instance.SetCurrentMachine(this);   // give machinefocusmanager a reference to itself
+
+                // change machine state
+                currentState = MachineState.Active;
                 currentDrink = drink; // store reference for CheckResponse to use
 
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
@@ -38,9 +49,47 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable
         }
     }
 
+
+    public void ActionFinished()
+    {
+        // wait til player done interacting
+
+        //PointManager.Instance.AddScore(10); // add points
+        if (currentDrink.milkFillProgress != 0)
+        {
+            currentDrink.milkAdded = true;
+            ToastManager.Instance.DisplayInteraction("Added milk into the cup.");
+            Debug.Log($"amt of milk: {currentDrink.milkFillProgress}");
+        } 
+    }
+
+    public void OnFocusExit()
+    {
+        // reset values for watermachineclick
+        MilkDispenserClick.Instance.ResetValues();
+
+        // remove UI
+        machineFocusParent.SetActive(false);
+        milkDispenserUI.SetActive(false);
+        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+
+        ProgressBarManager.Instance.SetProgressBarInactive();
+        ProgressBarManager.Instance.SetBarAmount(0f);
+
+        PlayerMovement.Instance.canMove = true;
+    }
+
     public void PromptFinished()
     {
-        StartCoroutine(DispenseMilk());
+        // display milk dispenser UI
+        ToastManager.Instance.DisplayInteraction("Press the button once the progress bar is full.");
+        machineFocusParent.SetActive(true);
+        milkDispenserUI.SetActive(true);
+        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+
+        // display progress bar
+        ProgressBarManager.Instance.SetProgressBarActive();
+        // StartCoroutine(DispenseMilk());
     }
 
     public void CheckResponse(string capturedResponse)

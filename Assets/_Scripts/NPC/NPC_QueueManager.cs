@@ -62,7 +62,7 @@ public class NPC_QueueManager : MonoBehaviour
     public void LeaveLine(NPC npc)
     {
         NPC_StartLine.Remove(npc);
-
+    
         // other NPCs move up line
         for(int i = 0; i < NPC_StartLine.Count; i++)
         {

@@ -12,8 +12,8 @@ public class NPC : MonoBehaviour, IInteractable
     [SerializeField] private float speed = 2.5f;
 
     public int NPC_Number;  // store what number the npc is
-    private float startWaitTime = 10f;    // how long npc will wait
-    private float endWaitTime = 20f;
+    private float startWaitTime = 15f;    // how long npc will wait
+    private float endWaitTime = 25f;
 
     public Order CurrentOrder { get; private set; }
 

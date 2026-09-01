@@ -17,9 +17,9 @@ public class InteractionDetector : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out IInteractable interactable) && interactable.CanInteract())
+        if(collision.TryGetComponent(out IInteractable interactable))
         {
-            Debug.Log("Would you like to take the object?");
+            Debug.Log("can interact with");
             interactableInRange = interactable;
             // interactionIcon active
         }

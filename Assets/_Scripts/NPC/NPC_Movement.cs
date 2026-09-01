@@ -82,6 +82,7 @@ public class NPC_Movement : MonoBehaviour
                     break;
 
                 case NPC_State.WaitAtCounter:
+                    NPC_QueueManager.Instance.counterOccupied = true;
                     npc.canInteract = true;
                     break;  // just waiting
 
@@ -142,9 +143,15 @@ public class NPC_Movement : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
             // remove from current state list
+            if(currentState == NPC_State.WalkToCounter && NPC_QueueManager.Instance.counterOccupied)
+            {
+                NPC_QueueManager.Instance.counterOccupied = false;
+                currentState = NPC_State.Leave;
+            }
             if (currentState == NPC_State.WaitAtCounter)
             {
                 NPC_QueueManager.Instance.counterOccupied = false;
+                Debug.Log("Left counter");
                 currentState = NPC_State.Leave;
             }
             else if (currentState == NPC_State.InQueue)
@@ -177,16 +184,19 @@ public class NPC_Movement : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
     }
 
+    // after npc gives order to player
     public void OrderGiven()
     {
         if (currentState == NPC_State.WaitAtCounter)
         {
             npc.orderGiven = true;
             NPC_QueueManager.Instance.counterOccupied = false;  // counter is vacant
+            Debug.Log("Left counter");
             currentState = NPC_State.WalkToPickup;
         }
     }
 
+    // after player gives order to npc
     public void OrderReceived()
     {
         // exit store
@@ -213,7 +223,6 @@ public class NPC_Movement : MonoBehaviour
             if (assignedQueueIndex == 0 && !NPC_QueueManager.Instance.counterOccupied)
             {
                 NPC_QueueManager.Instance.LeaveLine(npc);
-                NPC_QueueManager.Instance.counterOccupied = true;
                 currentWaypointIndex = 1;
                 currentState = NPC_State.WalkToCounter;
             }
@@ -226,5 +235,10 @@ public class NPC_Movement : MonoBehaviour
         {
             currentState = NPC_State.WaitForQueue;
         }
+    }
+
+    private void LeftCounter()
+    {
+        Debug.Log("Left counter");
     }
 }

@@ -10,6 +10,7 @@ public class MilkDispenserClick : MonoBehaviour
 
     private bool clickedOnce = false;
     private float pourTimer = 0f;
+
     [SerializeField] private float milkCap = 5f;
     [SerializeField] private float milkCapGracePeriod = 2f;
     private bool finishedPouring = false;

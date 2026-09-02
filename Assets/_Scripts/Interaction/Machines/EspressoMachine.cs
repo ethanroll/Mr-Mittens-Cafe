@@ -2,16 +2,19 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
+public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurrentMachine
 {
     [SerializeField] private Sprite espressoMachineIcon;
+    [SerializeField] private GameObject machineFocusParent;
+    [SerializeField] private GameObject espressoMachineUI;
+
     private string promptMessage = "How many shots of espresso would you like to add";
     private string[] responses = new string[] { "One", "Two", "Three" };
 
     // IMPLEMENT LATER FOR BEAN EVENT
     // public static event Action<int> OnScoreChanged;
 
-    private Drink currentDrink; // store drink at current hotbar slot
+    public Drink currentDrink; // store drink at current hotbar slot
 
     [SerializeField] private int numBeans = 1000; // initial value of espresso beans (will be updated)
     private int numBeansUsedPerShot = 50;   // for 1 shot usage
@@ -31,6 +34,19 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
         if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && !machineEmpty)
         {
+            PlayerMovement.Instance.canMove = false;
+
+            MachineFocusManager.Instance.SetCurrentMachine(this);
+
+            // display espresso machine UI
+            ToastManager.Instance.DisplayInteraction("Press the button once the progress bar is full.");
+            machineFocusParent.SetActive(true);
+            espressoMachineUI.SetActive(true);
+            MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+
+            // display progress bar
+            ProgressBarManager.Instance.SetProgressBarActive();
+            /*
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {
                 currentDrink = drink; // store reference for CheckResponse to use
@@ -50,22 +66,53 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable
                 InteractionPromptManager.Instance.LoadPrompt(this);
             }
 
+            */
+
             /*
             else if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && machineEmpty)
             {
                 ToastManager.Instance.DisplayInteraction("No more espresso beans in machine, must refill.");
             } */
 
-            else
+            /* else
             {
                 ToastManager.Instance.DisplayInteraction("Drink already has max number of espresso shots");
-            }
+            } */
         }
 
         else
         {
             ToastManager.Instance.DisplayInteraction("No drink selected");
         }
+    }
+
+    public void ActionFinished()
+    {
+        // wait til player done interacting
+
+        //PointManager.Instance.AddScore(10); // add points
+        //if (currentDrink.milkFillProgress != 0)
+        //{
+            // currentDrink.milkAdded = true;
+            ToastManager.Instance.DisplayInteraction("Added espresso into the cup.");
+            Debug.Log($"espresso shots: {currentDrink.numEspressoShots}");
+        //}
+    }
+
+    public void OnFocusExit()
+    {
+        // reset values for watermachineclick
+        EspressoMachineFocus.Instance.ResetValues();
+
+        // remove UI
+        machineFocusParent.SetActive(false);
+        espressoMachineUI.SetActive(false);
+        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+
+        ProgressBarManager.Instance.SetProgressBarInactive();
+        ProgressBarManager.Instance.SetBarAmount(0f);
+
+        PlayerMovement.Instance.canMove = true;
     }
 
     // call brew espresso when prompt complete

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrentMachine
 {
-    [SerializeField] private Sprite milkkDispenserIcon;
+    [SerializeField] private Sprite milkDispenserIcon;
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject milkDispenserUI;
 

@@ -22,52 +22,57 @@ public class EspressoMachineFocus : MonoBehaviour
 
     void Update()
     {
-        if (!clickedOnce && !finishedPouring)
+        // start machine
+        if(espressoMachine.currentState == MachineState.Active)
         {
-            // Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot();
-
-            //if (currentItem is Drink drink && HotbarManager.Instance.hasSlot)
-            //{
-
-            // fill withespresso
-            pourTimer += Time.deltaTime;
-
-            // calculate for filling bar
-            if (pourTimer <= espressoCap)
-            {
-                ProgressBarManager.Instance.FillBar(pourTimer/espressoCap);
-            }
-            // grace period before overflow
-            //else if (pourTimer >= milkCap + milkCapGracePeriod)
-            //{
-                // drink.milkOverflow = true;
-            //}
-            //}
+            StartTimer();
         }
 
-        else if (clickedOnce && !finishedPouring)
-        {
-            espressoMachine.ActionFinished();
+        // stop machine
+        else if (espressoMachine.currentState == MachineState.Inactive){
             finishedPouring = true;
+            espressoMachine.ActionFinished();
+            StopAllCoroutines();
         }
     }
 
     public void OnEspressoMachineButtonClicked()
     {
-        // true if first click
+        // true if first click start espresso machine
         if (!clickedOnce)
         {
             clickedOnce = true;
+            espressoMachine.currentState = MachineState.Active;
             StartCoroutine(AddEspresso());
+        }
+        else
+        {
+            espressoMachine.currentState = MachineState.Inactive;
         }
     }
 
     public void ResetValues()
     {
+        espressoMachine.currentState = MachineState.Idle;
         pourTimer = 0f;
         clickedOnce = false;
         finishedPouring = false;
     }
+
+
+    // timer when to start espresso machine
+    private void StartTimer()
+    {
+        // fill withespresso
+        pourTimer += Time.deltaTime;
+
+        // calculate for filling bar
+        if (pourTimer <= espressoCap)
+        {
+            ProgressBarManager.Instance.FillBar(pourTimer/espressoCap);
+        }
+    }
+
 
     // add num espressos
     private IEnumerator AddEspresso()

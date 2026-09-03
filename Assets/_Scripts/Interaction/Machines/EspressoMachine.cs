@@ -8,6 +8,8 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject espressoMachineUI;
 
+    public MachineState currentState = MachineState.Idle;
+
     private string promptMessage = "How many shots of espresso would you like to add";
     private string[] responses = new string[] { "One", "Two", "Three" };
 
@@ -18,7 +20,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
 
     [SerializeField] private int numBeans = 1000; // initial value of espresso beans (will be updated)
     private int numBeansUsedPerShot = 50;   // for 1 shot usage
-
     private bool machineEmpty = false;  // value for if numBeans == 0
 
     private int responsesNewLength; // store length of array when already have espresso
@@ -34,12 +35,14 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
         Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
         if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && !machineEmpty)
         {
+            currentDrink = drink;
+
             PlayerMovement.Instance.canMove = false;
 
             MachineFocusManager.Instance.SetCurrentMachine(this);
 
             // display espresso machine UI
-            ToastManager.Instance.DisplayInteraction("Press the button once the progress bar is full.");
+            StartCoroutine(StartMachinePrompt());
             machineFocusParent.SetActive(true);
             espressoMachineUI.SetActive(true);
             MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
@@ -86,6 +89,25 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
         }
     }
 
+
+    public void ActionFinished()
+    {
+        if (currentDrink == null)
+        {
+            Debug.LogError("currentDrink is null!");
+            return;
+        }
+        if (ToastManager.Instance == null)
+        {
+            Debug.LogError("ToastManager.Instance is null!");
+            return;
+        }
+
+        ToastManager.Instance.DisplayInteraction("Added espresso into the cup.");
+        Debug.Log($"espresso shots: {currentDrink.numEspressoShots}");
+    }
+
+/*
     public void ActionFinished()
     {
         // wait til player done interacting
@@ -97,7 +119,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
             ToastManager.Instance.DisplayInteraction("Added espresso into the cup.");
             Debug.Log($"espresso shots: {currentDrink.numEspressoShots}");
         //}
-    }
+    } */
 
     public void OnFocusExit()
     {
@@ -113,6 +135,16 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
         ProgressBarManager.Instance.SetBarAmount(0f);
 
         PlayerMovement.Instance.canMove = true;
+    }
+
+    // prompt user to press button to start until they have
+    private IEnumerator StartMachinePrompt()
+    {
+        while(currentState == MachineState.Idle)
+        {
+            ToastManager.Instance.DisplayInteraction("Press the button to start the machine.");
+            yield return new WaitForSeconds(5f);
+        }
     }
 
     // call brew espresso when prompt complete

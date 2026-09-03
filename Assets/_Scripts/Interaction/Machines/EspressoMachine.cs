@@ -46,9 +46,6 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
             machineFocusParent.SetActive(true);
             espressoMachineUI.SetActive(true);
             MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
-
-            // display progress bar
-            ProgressBarManager.Instance.SetProgressBarActive();
             /*
             if (drink.numEspressoShots == 0) // check if cup reached maxEspresso
             {

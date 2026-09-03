@@ -33,6 +33,7 @@ public class EspressoMachineFocus : MonoBehaviour
             finishedPouring = true;
             espressoMachine.ActionFinished();
             StopAllCoroutines();
+            espressoMachine.currentState = MachineState.Idle;
         }
     }
 
@@ -41,6 +42,11 @@ public class EspressoMachineFocus : MonoBehaviour
         // true if first click start espresso machine
         if (!clickedOnce)
         {
+            // set indiciation lines on progress bar
+            ProgressBarManager.Instance.hasIndicationLine = true;
+            ProgressBarManager.Instance.SetNumIndicationLines(espressoCap, oneEspressoShotTimeAmt);// set indication line values                                                                             // display progress bar
+            ProgressBarManager.Instance.SetProgressBarActive();
+
             clickedOnce = true;
             espressoMachine.currentState = MachineState.Active;
             StartCoroutine(AddEspresso());
@@ -53,7 +59,6 @@ public class EspressoMachineFocus : MonoBehaviour
 
     public void ResetValues()
     {
-        espressoMachine.currentState = MachineState.Idle;
         pourTimer = 0f;
         clickedOnce = false;
         finishedPouring = false;

@@ -169,6 +169,27 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 30, y: 4}
+  - name: IndicationLine
+    originalName: 
+    pivot: {x: 0.5, y: -3.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 30
+      y: 70
+      width: 24
+      height: 4
+    spriteID: 6484315c015b7c249a8ea591cb88be68
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 30, y: 70}
   spriteSheetImportData: []
   tileSetImportData: []
   asepriteLayers:
@@ -218,6 +239,31 @@ ScriptedImporter:
         width: 16
         height: 58
       spriteId: 19b726e4d77dfae4daba4d1f4ef0793b
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 2
+    uuid:
+      value0: 3110131162
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: IndicationLine
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: IndicationLine
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 20
+        y: 14
+        width: 24
+        height: 4
+      spriteId: 6484315c015b7c249a8ea591cb88be68
     linkedCells: []
     tileCells: []
     tileSetIndex: 0

@@ -38,7 +38,7 @@ public class ProgressBarManager : MonoBehaviour
         // check if has indication line
         if (hasIndicationLine)
         {
-            for (int i = 0; i < numIndicationLines; i++)
+            for (int i = 1; i <= numIndicationLines; i++)
             {
                 /* GameObject indicationLine = Instantiate(indicationLinePrefab, indicationLineContainer.transform);
                 spawnIndicationLine.Add(indicationLine); */
@@ -48,8 +48,10 @@ public class ProgressBarManager : MonoBehaviour
 
                 // FIX VALS LATER
                 float fraction = (i * 5f) / 15f; // exact fill fraction for this shot
-                rt.anchorMin = new Vector2(fraction, 0f);
-                rt.anchorMax = new Vector2(fraction, 1f);
+                Debug.Log($"Line {i}: fraction = {fraction}");
+
+                rt.anchorMin = new Vector2(0f, fraction);
+                rt.anchorMax = new Vector2(1f, fraction);
                 rt.anchoredPosition = new Vector2(0, 0);
 
                 spawnIndicationLine.Add(line);

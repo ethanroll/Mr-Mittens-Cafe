@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class EspressoMachineFocus : MonoBehaviour
+public class EspressoMachineClick : MonoBehaviour
 {
-    public static EspressoMachineFocus Instance { get; private set; }
+    public static EspressoMachineClick Instance { get; private set; }
 
     [SerializeField] private EspressoMachine espressoMachine;   // reference to espresso machine
 
@@ -12,7 +12,8 @@ public class EspressoMachineFocus : MonoBehaviour
 
     [SerializeField] private float oneEspressoShotTimeAmt = 5;
     [SerializeField] private float espressoCap = 15f;
-    [SerializeField] private float espressoCapPeriod = 2f;
+    [SerializeField] private float espressoCapGracePeriod = 2f;
+
     private bool finishedPouring = false;
 
     void Awake()
@@ -70,6 +71,13 @@ public class EspressoMachineFocus : MonoBehaviour
     {
         // fill withespresso
         pourTimer += Time.deltaTime;
+        espressoMachine.currentDrink.excessEspresso += Time.deltaTime;
+
+        // calculate how much excess between shots
+        if (espressoMachine.currentDrink.excessEspresso >= oneEspressoShotTimeAmt)
+        {
+            espressoMachine.currentDrink.excessEspresso = 0;;     
+        }
 
         // calculate for filling bar
         if (pourTimer <= espressoCap)
@@ -83,8 +91,11 @@ public class EspressoMachineFocus : MonoBehaviour
     private IEnumerator AddEspresso()
     {
         for (int i = 0; i < espressoCap / oneEspressoShotTimeAmt; i++) {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(oneEspressoShotTimeAmt);
             espressoMachine.currentDrink.numEspressoShots++;
+            Debug.Log(espressoMachine.currentDrink.numEspressoShots);
         }
     }
 }
+
+

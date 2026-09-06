@@ -48,6 +48,11 @@ public class OrderManager : MonoBehaviour
 
 
 
+    // CHANGE TO HAVE CONSTRUCTOR
+
+
+
+
     public Order GenerateRandomOrder(NPC npc, Drink drink, Food food)
     {
         Order npcOrder = new Order(); // store order

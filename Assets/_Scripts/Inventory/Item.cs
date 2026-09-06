@@ -14,13 +14,15 @@ public class Drink: Item
     public CupSize? cupSize;
     public DrinkType? drinkType;
     public Temperature? temperature;
-    public int numEspressoShots = 0;
     public IceLevel? iceLevel;
-    public MilkType? milkType;
+    
+    public int numEspressoShots = 0;
+    public float excessEspresso = 0;
 
     public bool waterFilled;
     public float waterFillProgress = 0f;
 
+    public MilkType? milkType;
     public bool milkAdded;
     public float milkFillProgress = 0f;
     public bool milkOverflow = false; // store if milk has overflowed out of the cup

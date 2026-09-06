@@ -137,10 +137,12 @@ public class HotbarManager : MonoBehaviour
             {
                 output += "cup";
 
-                if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";
+                if (drink.numEspressoShots != 0) output += " with " + drink.numEspressoShots + " espresso shots";    
                 if (drink.milkType != null) output += " with " + drink.milkType + " milk";
                 if (drink.waterFilled) output += " with water";
             }
+
+            if (drink.excessEspresso != 0) output += " excess espresso : " + drink.excessEspresso;
 
             if (drink.iceLevel != null)
             {

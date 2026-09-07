@@ -120,8 +120,8 @@ public class EspressoMachine : MonoBehaviour, IInteractable, IPromptable, ICurre
 
     public void OnFocusExit()
     {
-        // reset values for watermachineclick
-        EspressoMachineFocus.Click.ResetValues();
+        // reset values for espressomachineclick
+        EspressoMachineClick.Instance.ResetValues();
 
         // remove UI
         machineFocusParent.SetActive(false);

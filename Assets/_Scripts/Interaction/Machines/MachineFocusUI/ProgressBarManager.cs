@@ -40,9 +40,6 @@ public class ProgressBarManager : MonoBehaviour
         {
             for (int i = 1; i <= numIndicationLines; i++)
             {
-                /* GameObject indicationLine = Instantiate(indicationLinePrefab, indicationLineContainer.transform);
-                spawnIndicationLine.Add(indicationLine); */
-
                 GameObject line = Instantiate(indicationLinePrefab, indicationLineContainer.transform);
                 RectTransform rt = line.GetComponent<RectTransform>();
 
@@ -73,6 +70,22 @@ public class ProgressBarManager : MonoBehaviour
     public void SetNumIndicationLines(float dividend, float divisor)
     {
         numIndicationLines = dividend / divisor;    // how many indication lines
+    }
+
+    // set for custom lines
+    public void SetCustomIndicationLines(float[] posArray)
+    {
+        for (int i = 0; i < posArray.Length; i++)
+        {
+            GameObject line = Instantiate(indicationLinePrefab, indicationLineContainer.transform);
+            RectTransform rt = line.GetComponent<RectTransform>();
+
+            rt.anchorMin = new Vector2(0f, posArray[i]);
+            rt.anchorMax = new Vector2(1f, posArray[i]);
+            rt.anchoredPosition = new Vector2(0, 0);
+
+            spawnIndicationLine.Add(line);
+        }
     }
 
     // reset indication line values

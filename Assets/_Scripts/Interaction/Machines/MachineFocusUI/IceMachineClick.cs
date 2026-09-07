@@ -10,9 +10,12 @@ public class IceMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private bool mouseHeld = false;
     private float mouseHeldTimer = 0f;
 
-    [SerializeField] private float holdTimeLimit = 12;
-    [SerializeField] private float threshold = 4f;
+    [SerializeField] private float holdTimeLimit = 12f;
+    [SerializeField] private float gracePeriod = 2f;
+    // [SerializeField] private float threshold = 4f;
     public bool finishedScooping = false;
+
+    private float[] indicationLinePositions = { 0.25f, 0.50f, 1.00f };
 
     void Awake()
     {
@@ -23,44 +26,42 @@ public class IceMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     public void OnPointerDown(PointerEventData eventData)
     {
         mouseHeld = true;
-        Debug.Log("pointer down");
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         mouseHeld = false;
-        Debug.Log("pointer up");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         mouseHeld = false;
-        Debug.Log("pointer exit");
     }
 
     void Update()
     {
         // check when mouse is held and for how long
-        // check when mouse is held and for how long
-        if (mouseHeld && !finishedPouring)
+        if (mouseHeld && !finishedScooping)
         {
-            mouseHeldTimer = iceMachine.currentDrink.waterFillProgress * holdTimeLimit;  // start where left off if drink already has some water    
+            // mouseHeldTimer = iceMachine.currentDrink.numIce * holdTimeLimit;  // start where left off if drink already has some ice    
             mouseHeldTimer += Time.deltaTime;
 
             // calculate for filling bar
             float progress = mouseHeldTimer / holdTimeLimit;
             ProgressBarManager.Instance.FillBar(progress);
-            iceMachine.currentDrink.waterFillProgress = progress;
-
+            iceMachine.currentDrink.numIce = progress;
+            
             if (mouseHeldTimer >= holdTimeLimit)
             {
-                finishedPouring = true;
+                finishedScooping = true;
                 ProgressBarManager.Instance.FillBar(progress);
-                iceMachine.ActionFinished();
+
+                // HAVE IF FOR GRACE PERIOD LATER
+                iceMachine.ActionFinished(); 
             }
         }
 
-        else if (mouseHeld && finishedPouring)
+        else if (mouseHeld && finishedScooping)
         {
             ToastManager.Instance.DisplayInteraction("Cup already has enough water!");
         }
@@ -70,5 +71,31 @@ public class IceMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         mouseHeldTimer = 0f;
         finishedScooping = false;
+    }
+
+    // show indication lines
+    public void DisplayIndicationLines()
+    {
+        ProgressBarManager.Instance.hasIndicationLine = true;
+        ProgressBarManager.Instance.SetCustomIndicationLines(indicationLinePositions);// set indication line values                                                                             // display progress bar
+        ProgressBarManager.Instance.SetProgressBarActive();
+    }
+
+    // assign ice level
+    public void CheckIceLevel()
+    {
+        float ice = iceMachine.currentDrink.numIce;
+
+        if (ice * holdTimeLimit >= holdTimeLimit)
+            iceMachine.currentDrink.iceLevel = IceLevel.Regular;
+
+        else if (ice * holdTimeLimit >= holdTimeLimit / 2)
+            iceMachine.currentDrink.iceLevel = IceLevel.Half;
+
+        else if (ice * holdTimeLimit  >= (holdTimeLimit / 2) / 2)
+            iceMachine.currentDrink.iceLevel = IceLevel.Quarter;
+
+        else
+            iceMachine.currentDrink.iceLevel = null;
     }
 }

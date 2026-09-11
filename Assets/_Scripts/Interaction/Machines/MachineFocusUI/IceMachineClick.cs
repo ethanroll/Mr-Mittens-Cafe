@@ -81,11 +81,9 @@ public class IceMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         ProgressBarManager.Instance.SetProgressBarActive();
     }
 
-    // assign ice level
-    public void CheckIceLevel()
+    // assign ice level NEED TO DO SOMETHING ABOUT NUM ICE
+    public void CheckIceLevel(float ice)
     {
-        float ice = iceMachine.currentDrink.numIce;
-
         if (ice * holdTimeLimit >= holdTimeLimit)
             iceMachine.currentDrink.iceLevel = IceLevel.Regular;
 

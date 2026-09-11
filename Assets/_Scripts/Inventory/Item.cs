@@ -14,12 +14,13 @@ public class Drink: Item
     public CupSize? cupSize;
     public DrinkType? drinkType;
     public Temperature? temperature;
+    public Topping? topping;
 
     public IceLevel? iceLevel;
     public float numIce;
     
     public int numEspressoShots = 0;
-    public float excessEspresso = 0;
+    public float numEspresso = 0;
 
     public bool waterFilled;
     public float waterFillProgress = 0f;

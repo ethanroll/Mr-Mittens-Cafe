@@ -71,13 +71,14 @@ public class EspressoMachineClick : MonoBehaviour
     {
         // fill withespresso
         pourTimer += Time.deltaTime;
-        espressoMachine.currentDrink.excessEspresso += Time.deltaTime;
+        espressoMachine.currentDrink.numEspresso += Time.deltaTime;
 
-        // calculate how much excess between shots
-        if (espressoMachine.currentDrink.excessEspresso >= oneEspressoShotTimeAmt)
+        /*/ calculate how much excess between shots
+        if (espressoMachine.currentDrink.numEspresso >= oneEspressoShotTimeAmt)
         {
-            espressoMachine.currentDrink.excessEspresso = 0;;     
+            espressoMachine.currentDrink.numEspresso = 0;;     
         }
+        */
 
         // calculate for filling bar
         if (pourTimer <= espressoCap)
@@ -94,6 +95,18 @@ public class EspressoMachineClick : MonoBehaviour
             yield return new WaitForSeconds(oneEspressoShotTimeAmt);
             espressoMachine.currentDrink.numEspressoShots++;
             Debug.Log(espressoMachine.currentDrink.numEspressoShots);
+        }
+    }
+
+
+    // check how many espresso shots
+    private void CheckNumEspressoShots(float espresso)
+    {
+        switch (espresso)
+        {
+            case >= oneEspressoShotTimeAmt:
+                espressoMachine.currentDrink.numEspressoShots = 1;
+
         }
     }
 }

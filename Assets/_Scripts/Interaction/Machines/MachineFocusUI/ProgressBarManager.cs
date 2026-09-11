@@ -21,11 +21,13 @@ public class ProgressBarManager : MonoBehaviour
         Instance = this;
     }
 
+    // how much to fill progress bar
     public void FillBar(float fillAmt)
     {
         progressBarFill.fillAmount = fillAmt;
     }
 
+    // set progress bar amt
     public void SetBarAmount(float setBarAmt)
     {
         progressBarFill.fillAmount = setBarAmt;
@@ -56,9 +58,11 @@ public class ProgressBarManager : MonoBehaviour
         }
     }
 
+    
     public void SetProgressBarInactive()
     {
         progressBar.transform.parent.gameObject.SetActive(false);
+        SetBarAmount(0f);
 
         if (hasIndicationLine)
         {

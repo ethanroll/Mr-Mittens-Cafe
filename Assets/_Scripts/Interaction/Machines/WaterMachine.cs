@@ -75,7 +75,6 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
-        ProgressBarManager.Instance.SetBarAmount(0f);
 
         PlayerMovement.Instance.canMove = true;
     }

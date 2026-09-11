@@ -35,6 +35,7 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrent
                 currentState = MachineState.Active;
                 currentDrink = drink; // store reference for CheckResponse to use
 
+                // prompt user for type of milk
                 InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
                 InteractionPromptManager.Instance.LoadPrompt(this);
             }
@@ -74,7 +75,6 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrent
         MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
-        ProgressBarManager.Instance.SetBarAmount(0f);
 
         PlayerMovement.Instance.canMove = true;
     }

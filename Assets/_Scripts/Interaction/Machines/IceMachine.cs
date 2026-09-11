@@ -1,15 +1,12 @@
 using UnityEngine;
 
-public class IceMachine : MonoBehaviour, IInteractable, IPromptable, ICurrentMachine
+public class IceMachine : MonoBehaviour, IInteractable, ICurrentMachine
 {
     [SerializeField] private Sprite iceMachineIcon;
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject iceMachineUI;
 
     private MachineState currentState = MachineState.Idle;
-
-    private string promptMessage = "How much ice would you like to fill the cup?";
-    private string[] responses = new string[] { "Quarter", "Half", "Regular" };
 
     public Drink currentDrink; // store drink at current hotbar slot
 
@@ -39,10 +36,6 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable, ICurrentMac
                 MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
 
                 IceMachineClick.Instance.DisplayIndicationLines();
-
-                /*
-                InteractionPromptManager.Instance.AddPromptData(new PromptData { promptText = promptMessage, responses = responses });
-                InteractionPromptManager.Instance.LoadPrompt(this); */
             }
             else
             {
@@ -69,10 +62,9 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable, ICurrentMac
             return;
         }
 
-        IceMachineClick.Instance.CheckIceLevel();
+        IceMachineClick.Instance.CheckIceLevel(currentDrink.numIce);
         Debug.Log(currentDrink.iceLevel);
         ToastManager.Instance.DisplayInteraction("Added ice into the cup.");
-        // Debug.Log($"espresso shots: {currentDrink.numEspressoShots}");
     }
 
 
@@ -88,24 +80,7 @@ public class IceMachine : MonoBehaviour, IInteractable, IPromptable, ICurrentMac
         MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
-        ProgressBarManager.Instance.SetBarAmount(0f);
 
         PlayerMovement.Instance.canMove = true;
-    }
-
-    public void PromptFinished()
-    {
-        ToastManager.Instance.DisplayInteraction("Added ice to cup.");
-        HotbarManager.Instance.GetCurrentItemName(currentDrink);
-    }
-
-    public void CheckResponse(string capturedResponse)
-    {
-        switch (capturedResponse)
-        {
-            case "Quarter": currentDrink.iceLevel = IceLevel.Quarter; break;
-            case "Half": currentDrink.iceLevel = IceLevel.Half; break;
-            case "Regular": currentDrink.iceLevel = IceLevel.Regular; break;
-        }
     }
 }

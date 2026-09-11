@@ -4,6 +4,7 @@ using UnityEngine;
 public enum CupSize { Small, Medium, Large, XLarge }
 public enum DrinkType { Espresso, Americano, Cappuccino, Latte, FlatWhite, Cortado, Macchiato, ColdBrew, Tea, Soda, Water }
 public enum Temperature { Hot, Iced }
+public enum Topping { Acorn, MapleLeaf, Berries, TreeBark, Honeycomb, Mushroom}
 public enum IceLevel { Quarter, Half, Regular }
 public enum MilkType { Whole, Skim, Oat, Almond, Soy, Coconut }
 

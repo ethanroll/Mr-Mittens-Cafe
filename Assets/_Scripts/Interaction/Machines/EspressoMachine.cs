@@ -88,6 +88,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, ICurrentMachine
             return;
         }
 
+        EspressoMachineClick.Instance.CheckNumEspressoShots(currentDrink.numEspresso);
         ToastManager.Instance.DisplayInteraction("Added espresso into the cup.");
         Debug.Log($"espresso shots: {currentDrink.numEspressoShots}");
     }

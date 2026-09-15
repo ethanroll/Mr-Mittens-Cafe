@@ -100,14 +100,19 @@ public class EspressoMachineClick : MonoBehaviour
 
 
     // check how many espresso shots
-    private void CheckNumEspressoShots(float espresso)
+    public void CheckNumEspressoShots(float espresso)
     {
-        switch (espresso)
-        {
-            case >= oneEspressoShotTimeAmt:
-                espressoMachine.currentDrink.numEspressoShots = 1;
+        if (espresso >= oneEspressoShotTimeAmt * 3)
+            espressoMachine.currentDrink.numEspressoShots = 1;
 
-        }
+        else if (espresso >= oneEspressoShotTimeAmt * 2)
+            espressoMachine.currentDrink.numEspressoShots = 2;
+
+        else if (espresso >= oneEspressoShotTimeAmt)
+            espressoMachine.currentDrink.numEspressoShots = 1;
+
+        else
+            espressoMachine.currentDrink.numEspressoShots = 0;
     }
 }
 

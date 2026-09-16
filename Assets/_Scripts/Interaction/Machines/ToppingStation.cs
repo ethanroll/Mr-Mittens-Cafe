@@ -4,6 +4,7 @@ public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
 {
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject toppingStationUI;
+    [SerializeField] private GameObject toppingSlotPrefab;
 
     // have current prefab
 

@@ -14,7 +14,7 @@ public class Drink: Item
     public CupSize? cupSize;
     public DrinkType? drinkType;
     public Temperature? temperature;
-    public Topping? topping;
+    public DrinkTopping? drinkTopping;
 
     public IceLevel? iceLevel;
     public float numIce;

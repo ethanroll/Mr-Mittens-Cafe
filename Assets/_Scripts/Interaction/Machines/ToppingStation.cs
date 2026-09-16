@@ -1,26 +1,55 @@
 using UnityEngine;
 
-public class ToppingStation : MonoBehaviour
+public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private GameObject machineFocusParent;
+    [SerializeField] private GameObject toppingStationUI;
+
+    // have current prefab
+
+    private MachineState currentState = MachineState.Idle;
+    
+    public Drink currentDrink; // store drink at current hotbar slot
+
+
+
+    public bool CanInteract()
     {
-        
+        return true;
+        // return !IsOpened;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Interact()
     {
-        
-    }
+        Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
 
-    // TOPPING IDEAS
-        // - acorn
-        // - maple leaf
-        // - unique berries
-        // - tree bark
-        // - honeycomb
-        // - mushrooms
+        if (currentItem is Drink drink && HotbarManager.Instance.hasSlot)
+        {
+            if (drink.iceLevel == null)  // check if drink has ice already
+            {
+                currentDrink = drink; // store reference for CheckResponse to use
+
+                PlayerMovement.Instance.canMove = false;
+
+                MachineFocusManager.Instance.SetCurrentMachine(this);
+
+                // display ice mahine UI
+                machineFocusParent.SetActive(true);
+                iceMachineUI.SetActive(true);
+                MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+
+                IceMachineClick.Instance.DisplayIndicationLines();
+            }
+            else
+            {
+                ToastManager.Instance.DisplayInteraction("Drink already has ice");
+            }
+        }
+        else
+        {
+            ToastManager.Instance.DisplayInteraction("No drink selected");
+        }
+    }
 
     // function
         // havve list and can choose topping

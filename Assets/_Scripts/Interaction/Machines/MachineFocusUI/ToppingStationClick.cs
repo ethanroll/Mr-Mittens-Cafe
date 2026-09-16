@@ -2,14 +2,19 @@ using UnityEngine;
 
 public class ToppingStationClick : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static ToppingStationClick Instance;
+    [SerializeField] private ToppingStation toppingStation; // reference to water machine
+    [SerializeField] private GameObject currentToppingSprite;  
+
+    private bool clickedOnce = false;
+
+        void Awake()
     {
-        
+        Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    // append the topping sprite to drink
+    private void AppendToppingSprite()
     {
         
     }

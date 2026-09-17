@@ -13,7 +13,7 @@ public class HotbarManager : MonoBehaviour
 
     // UI
     public GameObject hotbarPanel;
-    public GameObject slotIcon;
+    // public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;
 
     private int activeSlot = -1;

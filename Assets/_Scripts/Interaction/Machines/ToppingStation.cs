@@ -1,12 +1,16 @@
-using UnityEngine;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 
 public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
 {
     [SerializeField] private GameObject machineFocusParent;
     [SerializeField] private GameObject toppingStationUI;
+    [SerializeField] private GameObject toppingStationPrefabParent;
     [SerializeField] private GameObject toppingSlotPrefab;
+
+    private Sprite currentSprite;
     
 
     // have current prefab
@@ -18,12 +22,19 @@ public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
     void Start()
     {
         // initiate all topping prefabs
-        foreach (DrinkType drink in Enum.GetValues(typeof(DrinkType)))
+        foreach (DrinkTopping drinkTopping in Enum.GetValues(typeof(DrinkTopping)))
         {
-            GameObject toppingPrefab = Instantiate(toppingSlotPrefab, toppingStationUI.transform);
-            // if drink == this assign sprite
-    }
+            GameObject toppingPrefabObj = Instantiate(toppingSlotPrefab, toppingStationPrefabParent.transform);
 
+            // assign sprite
+            Sprite currentSprite = ToppingStationUIManager.Instance.GetSprite(drinkTopping);
+            Image iconImage = toppingPrefabObj.transform.Find("itemIcon").GetComponent<Image>();
+            iconImage.sprite = currentSprite;
+
+            // assign topping type
+            ToppingStationPrefab prefabScript = toppingPrefabObj.GetComponent<ToppingStationPrefab>();
+            prefabScript.assignedTopping = drinkTopping;
+        }
     }
 
     public bool CanInteract()

@@ -148,6 +148,12 @@ public class HotbarManager : MonoBehaviour
             {
                 output += " with " + drink.iceLevel + " ice";
             }
+
+            // has topping
+            if (drink.drinkTopping != null)
+            {
+                output += " with " + drink.drinkTopping + " on top";
+            }
         }
 
         else if (item is Food food)

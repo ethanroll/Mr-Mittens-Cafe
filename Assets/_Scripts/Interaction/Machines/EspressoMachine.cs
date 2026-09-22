@@ -48,7 +48,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, ICurrentMachine
             StartCoroutine(StartMachinePrompt());
             machineFocusParent.SetActive(true);
             espressoMachineUI.SetActive(true);
-            MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+            CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
             /*
             else if (currentItem is Drink drink && HotbarManager.Instance.hasSlot && !HotbarManager.Instance.drinkIsBusy && machineEmpty)
@@ -102,7 +102,7 @@ public class EspressoMachine : MonoBehaviour, IInteractable, ICurrentMachine
         // remove UI
         machineFocusParent.SetActive(false);
         espressoMachineUI.SetActive(false);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
 

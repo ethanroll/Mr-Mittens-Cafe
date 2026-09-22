@@ -33,7 +33,7 @@ public class IceMachine : MonoBehaviour, IInteractable, ICurrentMachine
                 // display ice mahine UI
                 machineFocusParent.SetActive(true);
                 iceMachineUI.SetActive(true);
-                MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+                CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
                 IceMachineClick.Instance.DisplayIndicationLines();
             }
@@ -77,7 +77,7 @@ public class IceMachine : MonoBehaviour, IInteractable, ICurrentMachine
         // remove UI
         machineFocusParent.SetActive(false);
         iceMachineUI.SetActive(false);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
 

@@ -1,9 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class CancelManager : MonoBehaviour
 {
-    public static CancelManager Instance;
+    [SerializeField] public Button cancelButton;
 
+    public static CancelManager Instance;
     private ICancellable currentCancellable;
 
     
@@ -19,5 +22,14 @@ public class CancelManager : MonoBehaviour
     {
         currentCancellable?.Cancel();
         currentCancellable = null;
+    }
+
+    // if press esc
+    public void OnCancel(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            currentCancellable?.Cancel();
+        }
     }
 }

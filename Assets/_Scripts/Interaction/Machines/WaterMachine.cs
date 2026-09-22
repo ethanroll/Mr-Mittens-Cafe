@@ -33,7 +33,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
                 ToastManager.Instance.DisplayInteraction("Hold the button to begin pouring water.");
                 machineFocusParent.SetActive(true);
                 waterMachineUI.SetActive(true);
-                MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+                CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
                 // display progress bar
                 ProgressBarManager.Instance.SetProgressBarActive();
@@ -72,7 +72,7 @@ public class WaterMachine : MonoBehaviour, IInteractable, ICurrentMachine //, IP
         // remove UI
         machineFocusParent.SetActive(false);
         waterMachineUI.SetActive(false);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
 

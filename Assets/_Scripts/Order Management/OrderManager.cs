@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using TMPro;
 using UnityEngine.InputSystem;      // REMOVEEEEEE!
 
-public class OrderManager : MonoBehaviour
+public class OrderManager : MonoBehaviour, ICancellable
 {
-    public NPC npc;
+    [SerializeField] private GameObject orderList;
+    [SerializeField] private Transform orderTextPrefabParent;
+    [SerializeField] private TextMeshProUGUI orderTextPrefab;
 
     public static OrderManager Instance;
-    private List<Order> orders = new List<Order>();    // store all orders
 
+    private NPC currentNPC;
+
+    private List<Order> orders = new List<Order>();    // store all orders
     public List<bool> foodSchedule = new List<bool>(); // store if NPC will order food
     public List<bool> orderGiven = new List<bool>();   // store if order was given
 
     private int milkOrWater;    // store whether milk or water liquid will be chosen
-
-    private bool foodScheduleFinished = false;
-    //public bool willOrderFood = false;
     private int numOrderingFood = 0;
     private int foodOrderQuota = 5;
 
-    private NPC currentNPC;
+    private bool foodScheduleFinished = false;
+    private bool rPressed = false;
 
     public void Awake()
     {
-        // npc = GetComponent<NPC>();  // MIGHT NOT BE NEEDED ANYMORE
         Instance = this;
     }
 
@@ -39,9 +41,16 @@ public class OrderManager : MonoBehaviour
     // REMOVE
     void Update()
     {
-        if (Keyboard.current[Key.R].wasPressedThisFrame)
+        if (Keyboard.current[Key.R].wasPressedThisFrame && !rPressed)
         {
+            CancelManager.Instance.SetCancellable(this);
             PrintAllActiveOrders();
+            rPressed = true;
+        }
+
+        else if (Keyboard.current[Key.R].wasPressedThisFrame && rPressed)
+        {
+            CloseOrderList();
         }
     }
 
@@ -75,6 +84,7 @@ public class OrderManager : MonoBehaviour
         }
         return npcOrder;
     }
+
 
     public Drink GenerateRandomDrink(Drink drink)
     {
@@ -111,6 +121,7 @@ public class OrderManager : MonoBehaviour
         return food;
     }
 
+
     // method to shuffle vales, fisher yates method
     private void Shuffle<T>(List<T> list)
     {
@@ -120,6 +131,7 @@ public class OrderManager : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]); // swap
         }
     }
+
 
     // showcase which npcs will order food
     public void PopulateFoodSchedule()
@@ -140,6 +152,7 @@ public class OrderManager : MonoBehaviour
             numOrderingFood++;
         }
     }
+    
 
     // generic method for getting random enum value for a drink/food order
     private T GetRandomEnumValue<T>() where T : System.Enum
@@ -148,10 +161,15 @@ public class OrderManager : MonoBehaviour
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
 
+
     // print out list of all active orders (debug log for now)
     public void PrintAllActiveOrders()
     {
+        CancelManager.Instance.cancelButton.gameObject.SetActive(true);
+        orderList.SetActive(true);
+
         StringBuilder sb = new StringBuilder();
+
         if (NPC_Manager.Instance.activeNPCs.Count != 0)
         {      
             // get order for each npc
@@ -168,7 +186,7 @@ public class OrderManager : MonoBehaviour
                 // check if any orders were taken yet
                 if (currentNPC.CurrentOrder == null)
                 {
-                    Debug.Log("No orders");
+                    // newTextBox.text = "No orders yet.";
                     continue;
                 }
 
@@ -188,6 +206,15 @@ public class OrderManager : MonoBehaviour
                         sb.AppendLine($"   - {HotbarManager.Instance.GetCurrentItemName(food)}");
                     }
                 }
+
+                // print order 
+                // instantiate the text box prefab
+                TextMeshProUGUI newTextBox = Instantiate(orderTextPrefab);
+                newTextBox.transform.SetParent(orderTextPrefabParent, false);
+
+                newTextBox.text = sb.ToString();
+
+                sb.Clear();
             }
         }
         else
@@ -195,42 +222,31 @@ public class OrderManager : MonoBehaviour
             Debug.Log("No orders");
         }
 
-        Debug.Log(sb.ToString());
+       // Debug.Log(sb.ToString());
     }
 
-    private void GetNpcOrder()
+
+    // destroy all prefabs
+    private void DestroyPrefabs()
     {
-        
-    }
-
-    // get a list of all the active NPCs orders
-    public void GetActiveNPCsWithOrders()
-    {
-
-
-
-
-
-
-
-        /*
-        List<NPC> activeNPCs = new List<NPC>();
-
-#if UNITY_2023_1_OR_NEWER
-        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsSortMode.None);
-#else
-        NPC[] allNPCs = FindObjectsOfType<NPC>();
-#endif
-        foreach (NPC npcItem in allNPCs)
+        for (int i = orderTextPrefabParent.childCount - 1; i >= 0; i--)
         {
-            if (npcItem != null && npcItem.orderGiven && npcItem.requestedItems != null && npcItem.requestedItems.Count > 0)
-            {
-                activeNPCs.Add(npcItem);
-            }
+            Destroy(orderTextPrefabParent.GetChild(i).gameObject);
         }
+    }
 
-        activeNPCs.Sort((a, b) => a.NPC_Number.CompareTo(b.NPC_Number));
-        return activeNPCs; */
-    } 
+
+    private void CloseOrderList()
+    {
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
+        orderList.SetActive(false);
+        rPressed = false;
+        DestroyPrefabs();
+    }
+
+    public void Cancel()
+    {
+        CloseOrderList();
+    }
 }
 

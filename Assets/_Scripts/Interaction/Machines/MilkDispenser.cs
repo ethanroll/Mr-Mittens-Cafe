@@ -72,7 +72,7 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrent
         // remove UI
         machineFocusParent.SetActive(false);
         milkDispenserUI.SetActive(false);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
 
@@ -85,7 +85,7 @@ public class MilkDispenser : MonoBehaviour, IInteractable, IPromptable, ICurrent
         ToastManager.Instance.DisplayInteraction("Press the button once the progress bar is full.");
         machineFocusParent.SetActive(true);
         milkDispenserUI.SetActive(true);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
         // display progress bar
         ProgressBarManager.Instance.SetProgressBarActive();

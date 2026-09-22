@@ -60,7 +60,7 @@ public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
                 // display topping station UI
                 machineFocusParent.SetActive(true);
                 toppingStationUI.SetActive(true);
-                MachineFocusManager.Instance.cancelButton.gameObject.SetActive(true);
+                CancelManager.Instance.cancelButton.gameObject.SetActive(true);
             }
             else
             {
@@ -85,7 +85,7 @@ public class ToppingStation : MonoBehaviour, IInteractable, ICurrentMachine
         // remove UI
         machineFocusParent.SetActive(false);
         toppingStationUI.SetActive(false);
-        MachineFocusManager.Instance.cancelButton.gameObject.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
 
         ProgressBarManager.Instance.SetProgressBarInactive();
 

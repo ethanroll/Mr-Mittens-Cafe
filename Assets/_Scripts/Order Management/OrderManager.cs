@@ -5,12 +5,14 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;      // REMOVEEEEEE!
+using UnityEngine.UI;
 
 public class OrderManager : MonoBehaviour, ICancellable
 {
     [SerializeField] private GameObject orderList;
     [SerializeField] private Transform orderTextPrefabParent;
     [SerializeField] private TextMeshProUGUI orderTextPrefab;
+    [SerializeField] private ScrollRect orderScrollRect;
 
     public static OrderManager Instance;
 
@@ -216,13 +218,15 @@ public class OrderManager : MonoBehaviour, ICancellable
 
                 sb.Clear();
             }
+
+            Canvas.ForceUpdateCanvases(); // Forces layout recalculation before snapping
+            orderScrollRect.verticalNormalizedPosition = 1f;
+
         }
         else
         {
             Debug.Log("No orders");
         }
-
-       // Debug.Log(sb.ToString());
     }
 
 

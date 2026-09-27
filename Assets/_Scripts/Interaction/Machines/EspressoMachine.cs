@@ -103,8 +103,9 @@ public class EspressoMachine : MonoBehaviour, IInteractable, ICurrentMachine
         machineFocusParent.SetActive(false);
         espressoMachineUI.SetActive(false);
         CancelManager.Instance.cancelButton.gameObject.SetActive(false);
-
         ProgressBarManager.Instance.SetProgressBarInactive();
+
+        StopAllCoroutines();
 
         PlayerMovement.Instance.canMove = true;
     }

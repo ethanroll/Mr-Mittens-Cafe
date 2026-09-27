@@ -135,6 +135,7 @@ public class NPC_Movement : MonoBehaviour
             }
         }
 
+
         // if npc time limit exceeded
         else if (npc.startTimeExceeded || npc.endTimeExceeded)
         {
@@ -203,6 +204,7 @@ public class NPC_Movement : MonoBehaviour
         if (currentState == NPC_State.WaitForPickup)
         {
             currentWaypointIndex++;
+            NPC_Manager.Instance.completedNPCs.Add(npc);    // add npc to list of completed npcs
             currentState = NPC_State.OrderReceived;
         }
     }

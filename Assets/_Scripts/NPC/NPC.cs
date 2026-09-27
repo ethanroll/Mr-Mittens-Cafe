@@ -12,19 +12,20 @@ public class NPC : MonoBehaviour, IInteractable
     [SerializeField] private float speed = 2.5f;
 
     public int NPC_Number;  // store what number the npc is
-    private float startWaitTime = 15f;    // how long npc will wait
-    private float endWaitTime = 25f;
+    private float startWaitTime = 30f;    // how long npc will wait to give order
+    private float endWaitTime = 120f;      // how long npc will wait to receive given order     
 
     public Order CurrentOrder { get; private set; }
 
     private bool givingOrder = false;
+    public bool orderGiven = false;
     private bool orderReceived = false;
+
     public bool startTimeExceeded = false;
     public bool endTimeExceeded = false;
 
     private Drink drink;
     private Food food;
-    public bool orderGiven = false;
 
     public bool canInteract = false;
 
@@ -101,6 +102,7 @@ public class NPC : MonoBehaviour, IInteractable
                 StartCoroutine(OrderDialogue());
             }
 
+            // check order
             else if (orderGiven)
             {
                 Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
@@ -110,6 +112,9 @@ public class NPC : MonoBehaviour, IInteractable
                     orderReceived = true;
                     ToastManager.Instance.DisplayInteraction("Thank you!");
                     NPC_Manager.Instance.completedNPCs.Add(this);   // add npc to completed npcs list
+
+                    // call ADD POINTS
+                    PointChecker.Instance.AddPoints(currentItem, CurrentOrder);
                     movement.OrderReceived();  // NPC leaves
                 }
                 else
@@ -123,6 +128,7 @@ public class NPC : MonoBehaviour, IInteractable
             ToastManager.Instance.DisplayInteraction("I cannot be interacted with right now.");
         }
     }
+
 
     // check if order is correct
     private bool CheckOrder(Item currentOrder)
@@ -175,8 +181,6 @@ public class NPC : MonoBehaviour, IInteractable
 
         PlayerMovement.Instance.canMove = true;
         movement.OrderGiven(); // NPC walks to next counter
-
-        //OrderTrackingUI.Instance.AddTicket(this);  // add to ticket for UI
     }
 
     private IEnumerator SayOrder()

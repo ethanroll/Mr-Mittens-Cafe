@@ -33,6 +33,7 @@ public class EspressoMachineClick : MonoBehaviour
         else if (espressoMachine.currentState == MachineState.Inactive){
             finishedPouring = true;
             espressoMachine.ActionFinished();
+
             StopAllCoroutines();
             espressoMachine.currentState = MachineState.Idle;
         }

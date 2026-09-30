@@ -71,7 +71,7 @@ public class PointChecker : MonoBehaviour
                     score += milkAmtScore;
                 }
 
-                if (currentDrink.iceLevel == currentDrink.iceLevel)
+                if (drinkOrder.iceLevel == currentDrink.iceLevel)
                 {
                     score += iceScore;
                 }
@@ -97,7 +97,6 @@ public class PointChecker : MonoBehaviour
                 // add savory later
             }
         }
-        Debug.Log(score);
         return score;
     }   
 }

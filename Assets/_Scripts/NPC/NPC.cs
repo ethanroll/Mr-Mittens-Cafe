@@ -107,20 +107,23 @@ public class NPC : MonoBehaviour, IInteractable
             {
                 Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
 
-                if (CheckOrder(currentItem))
-                {
+
+                // WORKS NOW BECAUSE NO IF
+                
+               // if (CheckOrder(currentItem))
+               // {     
                     orderReceived = true;
                     ToastManager.Instance.DisplayInteraction("Thank you!");
                     NPC_Manager.Instance.completedNPCs.Add(this);   // add npc to completed npcs list
 
                     // call ADD POINTS
-                    PointChecker.Instance.AddPoints(currentItem, CurrentOrder);
+                    Debug.Log(PointChecker.Instance.AddPoints(currentItem, CurrentOrder));
                     movement.OrderReceived();  // NPC leaves
-                }
-                else
-                {
-                    StartCoroutine(SayOrder());
-                }
+               // }
+               // else
+               // {
+               //     StartCoroutine(SayOrder());
+               // }
             }
         }
         else

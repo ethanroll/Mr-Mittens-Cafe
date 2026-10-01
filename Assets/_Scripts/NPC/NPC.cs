@@ -102,7 +102,7 @@ public class NPC : MonoBehaviour, IInteractable
                 StartCoroutine(OrderDialogue());
             }
 
-            // check order
+            /*/ check order
             else if (orderGiven)
             {
                 Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
@@ -129,7 +129,7 @@ public class NPC : MonoBehaviour, IInteractable
         else
         {
             ToastManager.Instance.DisplayInteraction("I cannot be interacted with right now.");
-        }
+        } 
     }
 
 

@@ -3,17 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using TMPro;
-using UnityEngine.InputSystem;      // REMOVEEEEEE!
-using UnityEngine.UI;
 
-public class OrderManager : MonoBehaviour, ICancellable
+
+public class OrderManager : MonoBehaviour
 {
-    [SerializeField] private GameObject orderList;
-    [SerializeField] private Transform orderTextPrefabParent;
-    [SerializeField] private TextMeshProUGUI orderTextPrefab;
-    [SerializeField] private ScrollRect orderScrollRect;
-
     public static OrderManager Instance;
 
     private NPC currentNPC;
@@ -27,7 +20,6 @@ public class OrderManager : MonoBehaviour, ICancellable
     private int foodOrderQuota = 5;
 
     private bool foodScheduleFinished = false;
-    private bool rPressed = false;
 
     public void Awake()
     {
@@ -39,22 +31,6 @@ public class OrderManager : MonoBehaviour, ICancellable
          PopulateFoodSchedule();
     }
 
-
-    // REMOVE
-    void Update()
-    {
-        if (Keyboard.current[Key.R].wasPressedThisFrame && !rPressed)
-        {
-            CancelManager.Instance.SetCancellable(this);
-            PrintAllActiveOrders();
-            rPressed = true;
-        }
-
-        else if (Keyboard.current[Key.R].wasPressedThisFrame && rPressed)
-        {
-            CloseOrderList();
-        }
-    }
 
 
 
@@ -161,96 +137,6 @@ public class OrderManager : MonoBehaviour, ICancellable
     {
         System.Array values = System.Enum.GetValues(typeof(T));
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
-    }
-
-
-    // print out list of all active orders (debug log for now)
-    public void PrintAllActiveOrders()
-    {
-        CancelManager.Instance.cancelButton.gameObject.SetActive(true);
-        orderList.SetActive(true);
-
-        StringBuilder sb = new StringBuilder();
-
-        if (NPC_Manager.Instance.activeNPCs.Count != 0)
-        {      
-            // get order for each npc
-            for (int i = 0; i < NPC_Manager.Instance.activeNPCs.Count; i++)
-            {
-                currentNPC = NPC_Manager.Instance.activeNPCs[i];
-
-                // only show NPCs whose order has actually been taken
-                if (!currentNPC.orderGiven)
-                {
-                    continue;
-                }
-
-                // check if any orders were taken yet
-                if (currentNPC.CurrentOrder == null)
-                {
-                    // newTextBox.text = "No orders yet.";
-                    continue;
-                }
-
-                sb.AppendLine($"NPC number: {currentNPC.NPC_Number}:");
-
-                // iterate if npc has more than one item for order
-                for (int j = 0; j < currentNPC.CurrentOrder.requestedItems.Count; j++)
-                {
-                    Item currentItem = currentNPC.CurrentOrder.requestedItems[j];
-
-                    if (currentItem is Drink drink)
-                    {
-                        sb.AppendLine($"   - {HotbarManager.Instance.GetCurrentItemName(drink)}");
-                    }
-                    if (currentItem is Food food)
-                    {
-                        sb.AppendLine($"   - {HotbarManager.Instance.GetCurrentItemName(food)}");
-                    }
-                }
-
-                // print order 
-                // instantiate the text box prefab
-                TextMeshProUGUI newTextBox = Instantiate(orderTextPrefab);
-                newTextBox.transform.SetParent(orderTextPrefabParent, false);
-
-                newTextBox.text = sb.ToString();
-
-                sb.Clear();
-            }
-
-            Canvas.ForceUpdateCanvases(); // Forces layout recalculation before snapping
-            orderScrollRect.verticalNormalizedPosition = 1f;
-
-        }
-        else
-        {
-            Debug.Log("No orders");
-        }
-    }
-
-
-    // destroy all prefabs
-    private void DestroyPrefabs()
-    {
-        for (int i = orderTextPrefabParent.childCount - 1; i >= 0; i--)
-        {
-            Destroy(orderTextPrefabParent.GetChild(i).gameObject);
-        }
-    }
-
-
-    private void CloseOrderList()
-    {
-        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
-        orderList.SetActive(false);
-        rPressed = false;
-        DestroyPrefabs();
-    }
-
-    public void Cancel()
-    {
-        CloseOrderList();
     }
 }
 

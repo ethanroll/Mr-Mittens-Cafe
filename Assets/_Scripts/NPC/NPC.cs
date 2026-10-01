@@ -102,7 +102,7 @@ public class NPC : MonoBehaviour, IInteractable
                 StartCoroutine(OrderDialogue());
             }
 
-            /*/ check order
+            // check order
             else if (orderGiven)
             {
                 Item currentItem = HotbarManager.Instance.UserCurrentHotbarSlot(); // returns Item at currentHotbarSlot
@@ -133,7 +133,7 @@ public class NPC : MonoBehaviour, IInteractable
     }
 
 
-    // check if order is correct
+    /*/ check if order is correct
     private bool CheckOrder(Item currentOrder)
     {
         for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
@@ -170,7 +170,7 @@ public class NPC : MonoBehaviour, IInteractable
         // check if all incdices are true for requestedItemsGiven list
         bool allTrue = CurrentOrder.requestedItemsGiven.All(x => x);
         return allTrue;
-    }
+    } */
 
     // dialogue for interaction
     private IEnumerator OrderDialogue()
@@ -237,5 +237,5 @@ public class NPC : MonoBehaviour, IInteractable
         }
 
         return details;
-    }
+    } 
 }

@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1067889481363283612}
   - component: {fileID: 6922909090403386029}
   - component: {fileID: 8664817086738550942}
+  - component: {fileID: 8177178599121269181}
+  - component: {fileID: 3639718832334741268}
   m_Layer: 0
   m_Name: itemIcon
   m_TagString: Untagged
@@ -75,6 +77,30 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8177178599121269181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140991313454426180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecaa09fe519177049993006ef7ca12c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DraggableItem
+--- !u!225 &3639718832334741268
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140991313454426180}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7768494088340386552
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class RaycastDebug : MonoBehaviour
 {
+    /*
     void Update()
     {
         if (Mouse.current.scroll.ReadValue().y != 0f)
@@ -19,5 +20,5 @@ public class RaycastDebug : MonoBehaviour
             foreach (var r in results)
                 Debug.Log(r.gameObject.name);
         }
-    }
+    } */
 }

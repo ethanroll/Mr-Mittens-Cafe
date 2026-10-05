@@ -22,7 +22,7 @@ public class NPCListUI : MonoBehaviour
 
     public void PrintAllActiveNPCS()
     {
-        CancelManager.Instance.SetCancellable(this);
+        // CancelManager.Instance.SetCancellable(this);
 
         CancelManager.Instance.cancelButton.gameObject.SetActive(true);
         npcList.SetActive(true);

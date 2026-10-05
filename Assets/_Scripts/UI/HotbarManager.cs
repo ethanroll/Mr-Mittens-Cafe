@@ -7,17 +7,20 @@ public class HotbarManager : MonoBehaviour
 {
     public static HotbarManager Instance;
 
-    private Item[] hotbar = new Item[10]; // keys 0-10
+    public Item[] hotbar = new Item[10]; // keys 0-10
     Key[] hotbarKeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6,
                              Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0 }; // store keypressed to corresponding hotbar slot
 
     // UI
     public GameObject hotbarPanel;
+
     // public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;
 
-    private int activeSlot = -1;
     private Item currentHotbarSlot = null;
+
+    private int activeSlot = -1;
+
     public bool pressedOnce = false; // store if a hotbarkey was pressed at least once
     public bool drinkIsBusy = false; // store value for if drink is in a process
     private bool canPressAgain = false;
@@ -39,6 +42,9 @@ public class HotbarManager : MonoBehaviour
             GameObject slot = Instantiate(hotbarSlotPrefab, hotbarPanel.transform);  // instantiate 10 slots at start
             Image icon = slot.transform.GetChild(0).GetComponent<Image>();
             icon.enabled = false; // hide the empty icon so it doesn't block the highlight color
+
+            // give reference to slot index for dragging
+            slot.GetComponentInChildren<DraggableItem>().slotIndex = i;
         }
     }
 
@@ -203,10 +209,15 @@ public class HotbarManager : MonoBehaviour
                 Image icon = hotbarPanel.transform.GetChild(i).GetChild(0).GetComponent<Image>();
                 icon.sprite = item.icon;
                 icon.enabled = true;
+
+                // assign hotbar index to item
+                // item.hotbarIndex = i;
+
                 break;
             }
         }
     }
+
 
     // remove Item from hotbar
     public void RemoveFromHotbar()

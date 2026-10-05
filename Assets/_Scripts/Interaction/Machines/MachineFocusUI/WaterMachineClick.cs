@@ -20,17 +20,14 @@ public class WaterMachineClick : MonoBehaviour, IPointerDownHandler, IPointerUpH
     // check mouse states
     public void OnPointerDown(PointerEventData eventData) {
         mouseHeld = true;
-        Debug.Log("pointer down");
     }
 
     public void OnPointerUp(PointerEventData eventData) {
         mouseHeld = false;
-        Debug.Log("pointer up");
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         mouseHeld = false;
-        Debug.Log("pointer exit");
     }
 
     void Update()

@@ -17,7 +17,7 @@ using UnityEngine;
 */ 
 
 
-public class CheckOrder : MonoBehaviour, IInteractable
+public class CheckOrder : MonoBehaviour
 {
     public static CheckOrder Instance;
 
@@ -28,29 +28,11 @@ public class CheckOrder : MonoBehaviour, IInteractable
         Instance = this;
     }
 
-    public bool CanInteract()
-    {
-        return true;
-        // return !IsOpened;
-    }
 
-    public void Interact()
-    {
-        // 1. prompt shows up, place order
-        // 2. prompt again if more than 1
-        // 3. user click done placing order
-        // 4. prompt for which npc order you would like to give
-
-
-        checkingOrder = true;
-        OrderListUI.Instance.PrintAllActiveOrders();
-
-        // get order
-    }
 
 
     // prompt user for the order(s) they want to place
-    private PromptForOrder()
+    private void PromptForOrder()
     {
         Debug.Log("Place the order or orders you want to complete.");
     }

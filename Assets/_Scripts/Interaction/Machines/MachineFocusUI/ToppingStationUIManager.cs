@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections.Generic;
 
 // sprite correspond to drink topping
 [System.Serializable]

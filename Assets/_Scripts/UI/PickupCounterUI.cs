@@ -1,24 +1,25 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PickupCounterUI : MonoBehaviour, ICancellable
+public class PickupCounterUI : MonoBehaviour
 {
-    [SerializeField] private GameObject PickupCounterUIParent;
-    [SerializeField] private GameObject DragAndDropArea;
-    [SerializeField] private GameObject FinishButton;
+    public static PickupCounterUI Instance;
 
-    public void Cancel()
+    public static event System.Action OnCounterClosed;
+
+
+    void Awake()
     {
-        // reset values if userr cancel order before completing
+        Instance = this;
+    }
+
+    public void PickupCounterUICancel()
+    {
+        // reset values if user cancel order before completing
         if (!PickupCounter.Instance.isOrderComplete)
         {
             // fire event when close
             OnCounterClosed?.Invoke();
         }
-
-
-        // set ui inactive
-        PickupCounterUIParent.SetActive(false);
-        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
     }
 }

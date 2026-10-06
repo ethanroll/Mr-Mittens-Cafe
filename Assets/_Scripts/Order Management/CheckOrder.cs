@@ -29,8 +29,6 @@ public class CheckOrder : MonoBehaviour
     }
 
 
-
-
     // prompt user for the order(s) they want to place
     private void PromptForOrder()
     {

@@ -205,7 +205,7 @@ public class HotbarManager : MonoBehaviour
             {
                 hotbar[i] = item;
 
-                Debug.Log("add to hotbar method called");
+                // Debug.Log("add to hotbar method called");
                 Image icon = hotbarPanel.transform.GetChild(i).GetChild(0).GetComponent<Image>();
                 icon.sprite = item.icon;
                 icon.enabled = true;

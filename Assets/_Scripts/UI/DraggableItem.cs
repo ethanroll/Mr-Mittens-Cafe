@@ -21,7 +21,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Item currentItem;
 
     private bool CanDrag => PickupCounter.Instance.canDragIcons;
-    // public bool inDropSlot = false;
 
     // call event when counter ui is closed
     void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
@@ -60,9 +59,19 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public void OnEndDrag(PointerEventData eventData)
     {
         if (currentState == ItemCurrentState.InHotbar)
+        {
             transform.position = initialPos; // reset pos
+        }
         else
-            transform.position = currentDropSlot.slotPos;
+        {
+            transform.position = currentDropSlot.transform.position;
+        }
+
+        // in slot but not hovering on another slot
+        // if (currentState == ItemCurrentState.InDropSlot && !currentDropSlot.IsHoveringOnSlot)
+        // {
+
+        // }
 
         canvasGroup.blocksRaycasts = true;
     }

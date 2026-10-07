@@ -3,6 +3,12 @@ using UnityEngine.EventSystems;
 
 public class PickupCounterUI : MonoBehaviour
 {
+    // current state of PickupCounterUI
+    public enum ItemCurrentState
+    {
+        GivingOrder, ChoosingNPC
+    }
+
     public static PickupCounterUI Instance;
 
     public static event System.Action OnCounterClosed;

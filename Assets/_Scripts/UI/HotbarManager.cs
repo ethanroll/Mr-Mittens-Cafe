@@ -37,9 +37,10 @@ public class HotbarManager : MonoBehaviour
 
     public void Start()
     {
-        for(int i = 0; i < 10; i++)
+        // instantiate 10 slots at start
+        for (int i = 0; i < 10; i++)
         {
-            GameObject slot = Instantiate(hotbarSlotPrefab, hotbarPanel.transform);  // instantiate 10 slots at start
+            GameObject slot = Instantiate(hotbarSlotPrefab, hotbarPanel.transform);  
             Image icon = slot.transform.GetChild(0).GetComponent<Image>();
             icon.enabled = false; // hide the empty icon so it doesn't block the highlight color
 

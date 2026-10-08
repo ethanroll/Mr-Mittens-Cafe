@@ -14,13 +14,19 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public CanvasGroup canvasGroup;
     public DropSlot currentDropSlot; // store ref to drop slot
+    // public DropSlot swappingDropSlot;
 
     private Vector3 initialPos;  // store initial position of icon
     public int slotIndex;  // store what slot at
 
-    private Item currentItem;
+    public Item currentItem;
 
     private bool CanDrag => PickupCounter.Instance.canDragIcons;
+
+    // simplified bool checks
+    // private bool hasTarget = PickupCounterUI.Instance.targetDropSlot != null;
+    // private bool targetIsDifferent = currentDropSlot.dropSlotIndex != PickupCounterUI.Instance.targetDropSlot.dropSlotIndex;
+    // private bool targetHasItem = PickupCounterUI.Instance.targetDropSlot.slotItemHeld != null;
 
     // call event when counter ui is closed
     void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
@@ -58,21 +64,50 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (currentState == ItemCurrentState.InHotbar)
+        /* 1. in hotbar and drop on empty drop slot---
+         * 2. in hotbar and drop on occupied drop slot (swap)
+         * 3. in hotbar and drop on empty space---
+         * 
+         * 4. in drop slot and drop on empty drop slot
+         * 5. in drop slot and drop on occupied slow (swap)
+         * 6. in drop slot and drop on hotbar
+         * 7. in drop slot and drop on empty space
+         * 
+         * 
+         * 
+         * ondrop -> onenddrag
+         * 
+         */
+
+        // 3. in hotbar and drop on empty space
+        if (currentState == ItemCurrentState.InHotbar && PickupCounterUI.Instance.targetDropSlot == null)
         {
             transform.position = initialPos; // reset pos
         }
-        else
+
+        // 7. in drop slot and drop on empty space
+        if (currentState == ItemCurrentState.InDropSlot && PickupCounterUI.Instance.targetDropSlot == null)
         {
-            transform.position = currentDropSlot.transform.position;
+           transform.position = currentDropSlot.transform.position;
         }
 
-        // in slot but not hovering on another slot
-        // if (currentState == ItemCurrentState.InDropSlot && !currentDropSlot.IsHoveringOnSlot)
-        // {
+        if (currentState == ItemCurrentState.InDropSlot && PickupCounterUI.Instance.targetDropSlot != null)
+        {
 
-        // }
+        }
 
+        /*/ if in drop slot, has target drop slot, target different than current drop slot, target has item
+        if (currentState == ItemCurrentState.InDropSlot 
+            && PickupCounterUI.Instance.targetDropSlot != null 
+            && currentDropSlot.dropSlotIndex != PickupCounterUI.Instance.targetDropSlot.dropSlotIndex 
+            && PickupCounterUI.Instance.targetDropSlot.slotItemHeld != null)
+        {
+            // swap items when conditions met
+            PickupCounterUI.Instance.SwapItems(this);
+        } */
+
+
+        
         canvasGroup.blocksRaycasts = true;
     }
 

@@ -10,6 +10,7 @@ public class DropSlot : MonoBehaviour, IDropHandler
     public Vector3 slotPos;  // store initial position of slot
     RectTransform rt;
 
+    public DraggableItem draggable;
     public Item slotItemHeld;
     public Item draggableItemRef;   // reference to the item that was dragged
 
@@ -28,7 +29,19 @@ public class DropSlot : MonoBehaviour, IDropHandler
     void Update()
     {
         if (IsHoveringOnSlot)
-            Debug.Log("Hovering over drop slot :)");
+        {
+            // PickUpCounterUI.Instance.isHoveringOnSlot = true;
+            PickupCounterUI.Instance.targetDropSlot = this;
+            Debug.Log("Hovering over drop slot : " + PickupCounterUI.Instance.targetDropSlot.dropSlotIndex);
+        }
+
+        // only clear if this slot is the current target
+        else if (PickupCounterUI.Instance.targetDropSlot == this)
+        {
+            PickupCounterUI.Instance.targetDropSlot = null;
+            Debug.Log("Drop Slot = null");
+            // PickUpCounterUI.Instance.isHoveringOnSlot = false;
+        }
     }
 
     void Start()
@@ -40,11 +53,11 @@ public class DropSlot : MonoBehaviour, IDropHandler
     // --- hotbar slot to drop icon --- 
     public void OnDrop(PointerEventData eventData)
     {
-        DraggableItem draggable = eventData.pointerDrag.GetComponent<DraggableItem>();
+        draggable = eventData.pointerDrag.GetComponent<DraggableItem>();
 
-        // check if dropped from hotbar
-        // if (draggable.currentState == ItemCurrentState.InHotbar)
-        //{
+        // 1. in hotbar and drop on empty drop slot
+        if (draggable.currentState == ItemCurrentState.InHotbar && slotItemHeld == null)
+        {
             if (draggable == null)
                 return;
 
@@ -56,14 +69,22 @@ public class DropSlot : MonoBehaviour, IDropHandler
             draggable.currentState = ItemCurrentState.InDropSlot;
             draggable.SetCurrentHotbarSlotItemNull();
 
+            // draggable.transform.position = slotPos;
+
             Debug.Log(HotbarManager.Instance.GetCurrentItemName(slotItemHeld));
-        // }
+        }
 
-        /*/ swap drop slots
-        else
+        // 4. in drop slot and drop on empty drop slot
+        if (draggable.currentState == ItemCurrentState.InDropSlot && draggable.currentDropSlot.slotItemHeld == null)
         {
+            draggableItemRef = draggable.currentItem;
+            slotItemHeld = draggableItemRef; // get dragged item into slot
 
-        } */
+            draggable.currentDropSlot = this;
+            // draggable.currentState = ItemCurrentState.InDropSlot;
+
+            draggable.transform.position = slotPos;
+        }
     }
 
 

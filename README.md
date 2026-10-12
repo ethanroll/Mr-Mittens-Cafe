@@ -1,7 +1,7 @@
-<h1 align="center">Mr. Mittens' Cafe</h1>
+<h1 align="center">Mr. Mitten's Cafe</h1>
 
 <p align="center">
-  <em>A Unity game where you make and serve drinks to animal npcs!</em>
+  <em>A Unity game where you make and serve drinks to animal NPCs!</em>
 </p>
 
 <p align="center">
@@ -115,7 +115,7 @@
 </p>
 
 <p>
-  <a href="linkedin.com/in/ethan-caoile-641a9632a">LinkedIn</a>
+  <a href="https://www.linkedin.com/in/ethan-caoile-641a9632a">LinkedIn</a>
   &nbsp;|&nbsp;
-  ejcaoile@cpp.edu
+  ethancaoile1@gmail.com
 </p>

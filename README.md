@@ -4,14 +4,6 @@
   <em>(A Unity game where you make and serve drinks to animal npcs!)</em>
 </p>
 
-<br>
-
-<p align="center">
-  <img src="(insert screenshot or gif link here)" alt="Delivery Time gameplay" width="600">
-</p>
-
-<br>
-
 <p align="center">
   <strong>Status:</strong> In progress
   &nbsp;&nbsp;|&nbsp;&nbsp;

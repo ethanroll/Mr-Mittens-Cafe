@@ -24,10 +24,10 @@
 <hr>
 <br>
 
-<h2>📖 About</h2>
+<h2> About</h2>
 
 <p>
-  (insert 2-3 sentences here: what the game is, what the player does, what inspired it)
+  In this game, the player creates drinks by combining different elements using machines that prompt small minigames to add ingredients to the drinks. The player will then serve these orders to the NPCs and gain points corresponding to the given orders, and must do so within the time limit to maximize points earned.
 </p>
 
 <br>
@@ -83,6 +83,8 @@
   <li>Level-based configuration with ScriptableObjects and a <code>LevelManager</code></li>
   <br>
   <li>Directional character animations (idle/walk) made in Aseprite</li>
+  <br>
+  <li>Add Sprites for Player, NPCs, and Environment</li>
 </ul>
 
 <br>
@@ -105,32 +107,20 @@
 <h2> What I Worked On / Learned</h2>
 
 <p>
-  (insert 1-3 sentences here about what you built yourself or learned, like "Wrote the player controller from scratch and learned how Unity's physics works")
+  (insert 1-3 sentences here about what you built yourself or learned, like "Wrote the player controller from scratch and learned how Unity's physics works") This is my first-ever project on Unity, and on this journey I learned many new things about C#, game logic, and how Unity’s engine actually works. One thing I learned was how to effectively use the Coroutine system for the espresso machine, which set a consecutive timer to prompt the user to start the machine, and ended when detecting user input.
 </p>
 
 <br>
 <hr>
 <br>
 
-<h2>▶️ How to Run</h2>
-
-<ol>
-  <li>Clone the repo:
-    <br><br>
-    <code>git clone (insert repo link here)</code>
-    <br><br>
-  </li>
-  <li>Open the project in Unity (version: insert here)
-    <br><br>
-  </li>
-  <li>Open the main scene (insert scene name here) and hit Play</li>
-</ol>
+<h2> How to Run</h2>
 
 <br>
 <hr>
 <br>
 
-<h2>📬 Contact</h2>
+<h2> Contact</h2>
 
 <p>
   <strong>Ethan</strong><br>
@@ -138,7 +128,7 @@
 </p>
 
 <p>
-  <a href="(insert LinkedIn link here)">LinkedIn</a>
+  <a href="https://www.linkedin.com/in/ethan-caoile-641a9632a/?isSelfProfile=true">LinkedIn</a>
   &nbsp;|&nbsp;
-  (insert email here)
+  ejcaoile@cpp.edu
 </p>

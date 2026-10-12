@@ -115,7 +115,7 @@
 </p>
 
 <p>
-  <a href="https://www.linkedin.com/in/ethan-caoile-641a9632a/?isSelfProfile=true">LinkedIn</a>
+  <a href="linkedin.com/in/ethan-caoile-641a9632a">LinkedIn</a>
   &nbsp;|&nbsp;
   ejcaoile@cpp.edu
 </p>

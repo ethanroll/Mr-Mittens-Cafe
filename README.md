@@ -99,18 +99,13 @@
 <h2> What I Worked On / Learned</h2>
 
 <p>
-  (insert 1-3 sentences here about what you built yourself or learned, like "Wrote the player controller from scratch and learned how Unity's physics works") This is my first-ever project on Unity, and on this journey I learned many new things about C#, game logic, and how Unity’s engine actually works. One thing I learned was how to effectively use the Coroutine system for the espresso machine, which set a consecutive timer to prompt the user to start the machine, and ended when detecting user input.
+  This is my first-ever project on Unity, and on this journey I learned many new things about C#, game logic, and how Unity’s engine actually works. One thing I learned was how to effectively use the Coroutine system for the espresso machine, which set a consecutive timer to prompt the user to start the machine, and ended when detecting user input.
 </p>
 
 <br>
 <hr>
 <br>
 
-<h2> How to Run</h2>
-
-<br>
-<hr>
-<br>
 
 <h2> Contact</h2>
 

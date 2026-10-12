@@ -1,7 +1,7 @@
-<h1 align="center"> Delivery Time</h1>
+<h1 align="center">Mr. Mittens' Cafe</h1>
 
 <p align="center">
-  <em>(A Unity game where you make and serve drinks to animal npcs!)</em>
+  <em>A Unity game where you make and serve drinks to animal npcs!</em>
 </p>
 
 <p align="center">

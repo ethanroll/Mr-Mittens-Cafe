@@ -38,7 +38,7 @@ public class InteractionPromptManager : MonoBehaviour
         if (currentPromptIndex != prompts.Count)
         {
             removeWindowParentChild();  // remove previous instances of responses
-            HotbarManager.Instance.hotbarPanel.SetActive(false);    // temporarily remove hotbar
+            HotbarManager.Instance.hotbarPanel.gameObject.SetActive(false);    // temporarily remove hotbar
 
             interactionPrompt = prompts[currentPromptIndex].promptText;
             promptWindow.SetActive(true);
@@ -71,7 +71,7 @@ public class InteractionPromptManager : MonoBehaviour
             prompts.Clear();
 
             // put back hotbar
-            HotbarManager.Instance.hotbarPanel.SetActive(true);
+            HotbarManager.Instance.hotbarPanel.gameObject.SetActive(true);
 
             //remove UI
             promptWindow.SetActive(false);

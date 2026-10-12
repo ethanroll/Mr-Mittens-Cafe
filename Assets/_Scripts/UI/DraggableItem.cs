@@ -12,6 +12,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 {
     public ItemCurrentState currentState;
 
+    // public RectTransform hotbarPanel;
+
     public CanvasGroup canvasGroup;
     public DropSlot currentDropSlot; // store ref to drop slot
     // public DropSlot swappingDropSlot;
@@ -23,10 +25,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     private bool CanDrag => PickupCounter.Instance.canDragIcons;
 
-    // simplified bool checks
-    // private bool hasTarget = PickupCounterUI.Instance.targetDropSlot != null;
-    // private bool targetIsDifferent = currentDropSlot.dropSlotIndex != PickupCounterUI.Instance.targetDropSlot.dropSlotIndex;
-    // private bool targetHasItem = PickupCounterUI.Instance.targetDropSlot.slotItemHeld != null;
+    private bool handled;  // store if the item has been handled by a drop slot
 
     // call event when counter ui is closed
     void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
@@ -45,13 +44,16 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (!CanDrag)
             return;
 
+        handled = false;
+
         if (currentState == ItemCurrentState.InHotbar)
         {
             // intial Pos = hotbar slot
             initialPos = transform.position;
             Debug.Log("current slot index: " + slotIndex);
-            canvasGroup.blocksRaycasts = false; // lets the slot "see" what's dropped on it
         }
+
+        canvasGroup.blocksRaycasts = false; // lets the slot "see" what's dropped on it
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -68,60 +70,49 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
          * 2. in hotbar and drop on occupied drop slot (swap)
          * 3. in hotbar and drop on empty space---
          * 
-         * 4. in drop slot and drop on empty drop slot
+         * 4. in drop slot and drop on empty drop slot---
          * 5. in drop slot and drop on occupied slow (swap)
          * 6. in drop slot and drop on hotbar
-         * 7. in drop slot and drop on empty space
-         * 
-         * 
+         * 7. in drop slot and drop on empty space--
          * 
          * ondrop -> onenddrag
          * 
          */
 
-        // 3. in hotbar and drop on empty space
-        if (currentState == ItemCurrentState.InHotbar && PickupCounterUI.Instance.targetDropSlot == null)
+
+        // nothing handeled drop, go back to previous position
+        if (!handled)
         {
-            transform.position = initialPos; // reset pos
+            transform.position = (currentState == ItemCurrentState.InDropSlot) ? currentDropSlot.transform.position : initialPos;
         }
 
-        // 7. in drop slot and drop on empty space
-        if (currentState == ItemCurrentState.InDropSlot && PickupCounterUI.Instance.targetDropSlot == null)
-        {
-           transform.position = currentDropSlot.transform.position;
-        }
-
-        if (currentState == ItemCurrentState.InDropSlot && PickupCounterUI.Instance.targetDropSlot != null)
-        {
-
-        }
-
-        /*/ if in drop slot, has target drop slot, target different than current drop slot, target has item
-        if (currentState == ItemCurrentState.InDropSlot 
-            && PickupCounterUI.Instance.targetDropSlot != null 
-            && currentDropSlot.dropSlotIndex != PickupCounterUI.Instance.targetDropSlot.dropSlotIndex 
-            && PickupCounterUI.Instance.targetDropSlot.slotItemHeld != null)
-        {
-            // swap items when conditions met
-            PickupCounterUI.Instance.SwapItems(this);
-        } */
-
-
-        
         canvasGroup.blocksRaycasts = true;
     }
 
-
-    // --- drop slot to hotbar icon ---
     public void OnDrop(PointerEventData eventData)
     {
-        // get values back
+        // something was dropped on this icon: if I'm sitting in a slot, treat it as a drop on that slot
+        if (currentState == ItemCurrentState.InDropSlot && currentDropSlot != null)
+            currentDropSlot.OnDrop(eventData);
+    }
+
+
+
+    // replaces the old OnDrop
+    public void ReturnToHotbar()
+    {
+        if (currentState != ItemCurrentState.InDropSlot) return;
+
+        transform.position = initialPos;
+        currentState = ItemCurrentState.InHotbar;
+
         currentDropSlot.ResetState();
         HotbarManager.Instance.hotbar[slotIndex] = currentItem;
-
-        currentState = ItemCurrentState.InHotbar;
         currentDropSlot = null;
+
+        handled = true;
     }
+
 
 
     // get current item at hotbar slot and store ref to original item
@@ -138,6 +129,50 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         HotbarManager.Instance.hotbar[slotIndex] = null;
     }
 
+
+    // move to drop slot position
+    public void MoveToSlot(DropSlot slot)
+    {
+        // drop slot to another drop slot
+        if (currentState == ItemCurrentState.InDropSlot)
+        {
+            if (currentDropSlot.heldIcon == this)
+                currentDropSlot.ResetState();   // reset values of old drop slot
+        }
+        // leaving hotbar
+        else
+        {
+            currentItem = HotbarManager.Instance.hotbar[slotIndex];
+            SetCurrentHotbarSlotItemNull();  // set hotbar slot to null
+        }
+
+        // update new slot for item
+        slot.slotItemHeld = currentItem;
+        slot.heldIcon = this;
+        currentDropSlot = slot;
+
+        currentState = ItemCurrentState.InDropSlot;
+        transform.position = slot.transform.position;
+
+        handled = true;
+    }
+
+
+    // return item to hotbar
+    public void ReturnToHotar()
+    {
+        if (currentState != ItemCurrentState.InDropSlot)
+            return;
+
+        currentDropSlot.ResetState();
+        HotbarManager.Instance.hotbar[slotIndex] = currentItem;
+        currentDropSlot = null;
+
+        currentState = ItemCurrentState.InHotbar;
+        transform.position = initialPos;
+
+        handled = true;
+    }
 
     // reset state maybe have check if abrupt
     public void ResetState()

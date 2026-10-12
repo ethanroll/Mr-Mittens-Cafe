@@ -7,15 +7,11 @@ public class DropSlot : MonoBehaviour, IDropHandler
     public int dropSlotIndex;   // ref
 
     public CanvasGroup canvasGroup;
-    public Vector3 slotPos;  // store initial position of slot
     RectTransform rt;
 
-    public DraggableItem draggable;
-    public Item slotItemHeld;
-    public Item draggableItemRef;   // reference to the item that was dragged
+    public Item slotItemHeld;   // ref to item held in slot
+    public DraggableItem heldIcon;  // ref to draggable item icon held in slot
 
-    // true if mouse is over this slot, ignores anything on top
-    public bool IsHoveringOnSlot => RectTransformUtility.RectangleContainsScreenPoint(rt, Mouse.current.position.ReadValue(), null);
 
     // call event when counter ui is closed
     void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
@@ -26,64 +22,37 @@ public class DropSlot : MonoBehaviour, IDropHandler
         rt = GetComponent<RectTransform>();
     }
 
-    void Update()
-    {
-        if (IsHoveringOnSlot)
-        {
-            // PickUpCounterUI.Instance.isHoveringOnSlot = true;
-            PickupCounterUI.Instance.targetDropSlot = this;
-            Debug.Log("Hovering over drop slot : " + PickupCounterUI.Instance.targetDropSlot.dropSlotIndex);
-        }
 
-        // only clear if this slot is the current target
-        else if (PickupCounterUI.Instance.targetDropSlot == this)
-        {
-            PickupCounterUI.Instance.targetDropSlot = null;
-            Debug.Log("Drop Slot = null");
-            // PickUpCounterUI.Instance.isHoveringOnSlot = false;
-        }
-    }
-
-    void Start()
-    {
-        // get position of current slot
-        slotPos = transform.position;
-    }
-
-    // --- hotbar slot to drop icon --- 
+    // drop onto drop slot
     public void OnDrop(PointerEventData eventData)
     {
-        draggable = eventData.pointerDrag.GetComponent<DraggableItem>();
+        // item = draggable item dropped onto slot
+        var item = eventData.pointerDrag != null? eventData.pointerDrag.GetComponent<DraggableItem>(): null;
 
-        // 1. in hotbar and drop on empty drop slot
-        if (draggable.currentState == ItemCurrentState.InHotbar && slotItemHeld == null)
+        if (item == null) return;  // occupied = ignore 
+
+        // drop item 1 and slot is empty
+        if (slotItemHeld == null)
         {
-            if (draggable == null)
-                return;
-
-            draggableItemRef = draggable.GetCurrentHotbarSlotItem();
-            slotItemHeld = draggableItemRef; // get dragged item into slot
-
-            // draggable item realize it's currently in slot
-            draggable.currentDropSlot = this;
-            draggable.currentState = ItemCurrentState.InDropSlot;
-            draggable.SetCurrentHotbarSlotItemNull();
-
-            // draggable.transform.position = slotPos;
-
-            Debug.Log(HotbarManager.Instance.GetCurrentItemName(slotItemHeld));
+            item.MoveToSlot(this);
         }
 
-        // 4. in drop slot and drop on empty drop slot
-        if (draggable.currentState == ItemCurrentState.InDropSlot && draggable.currentDropSlot.slotItemHeld == null)
+        // icon currently in this slot
+        DraggableItem otherItem = heldIcon;
+        if (otherItem == item) return;
+
+        if (item.currentState == ItemCurrentState.InHotbar)
         {
-            draggableItemRef = draggable.currentItem;
-            slotItemHeld = draggableItemRef; // get dragged item into slot
-
-            draggable.currentDropSlot = this;
-            // draggable.currentState = ItemCurrentState.InDropSlot;
-
-            draggable.transform.position = slotPos;
+            // kick the old icon back to the hotbar, then move in
+            otherItem.ReturnToHotbar();
+            item.MoveToSlot(this);
+        }
+        else
+        {
+            // other goes to item's old slot, item goes here
+            DropSlot oldSlot = item.currentDropSlot;
+            otherItem.MoveToSlot(oldSlot);
+            item.MoveToSlot(this);
         }
     }
 
@@ -93,7 +62,7 @@ public class DropSlot : MonoBehaviour, IDropHandler
     {
         // reset values
         slotItemHeld = null;
-        draggableItemRef = null;
+        heldIcon = null;
     }
 
 

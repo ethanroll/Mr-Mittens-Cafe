@@ -1,8 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class PickupCounterUI : MonoBehaviour
+public class PickupCounterUI : MonoBehaviour, INext_Previous
 {
+    [SerializeField] private GameObject previousButton;
+    [SerializeField] private GameObject nextButton;
+
+
     // current state of PickupCounterUI
     public enum ItemCurrentState
     {
@@ -15,33 +20,13 @@ public class PickupCounterUI : MonoBehaviour
 
 
     // MAY CHANGE LATER
-    public DropSlot targetDropSlot;   // store slot to swap with 
+    // public DropSlot targetDropSlot;   // store slot to swap with 
     // public bool isHoveringOnSlot = false;
 
 
     void Awake()
     {
         Instance = this;
-    }
-
-
-    public void SwapItems(DraggableItem currentDraggableItem)
-    {
-        // get original values of items to swap
-        Item item1 = currentDraggableItem.currentItem;
-        Item item2 = targetDropSlot.slotItemHeld;
-
-        // swap values
-        targetDropSlot.slotItemHeld = item1;
-        currentDraggableItem.currentDropSlot.slotItemHeld = item2;
-
-        // ref
-        targetDropSlot.draggableItemRef = item1;
-        currentDraggableItem.currentDropSlot.draggableItemRef = item2;
-
-        // swap positions
-        targetDropSlot.draggable.transform.position = currentDraggableItem.currentDropSlot.transform.position;
-        currentDraggableItem.currentDropSlot.draggable.transform.position = targetDropSlot.transform.position;
     }
 
 
@@ -53,5 +38,36 @@ public class PickupCounterUI : MonoBehaviour
             // fire event when close
             OnCounterClosed?.Invoke();
         }
+    }
+
+
+    // set buttons active
+   public void SetButtonsActive()
+    {
+        Next_PreviousManager.Instance.SetCurrent(this);    // give ref to itself
+        previousButton.SetActive(true);
+        nextButton.SetActive(true);
+    }
+
+
+    // set buttons inactive
+    public void SetButtonsInactive()
+    {
+        previousButton.SetActive(false);
+        nextButton.SetActive(false);
+        Next_PreviousManager.Instance.SetCurrent(null);  // remove ref
+    }
+
+
+    // if choosing npc go back to choosing order
+    public void Previous()
+    {
+        Debug.Log("Previous pressed");
+    }
+
+    // if choosing order go to choose npc
+    public void Next()
+    {
+        Debug.Log("Next pressed");
     }
 }

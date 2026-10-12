@@ -12,7 +12,7 @@ public class HotbarManager : MonoBehaviour
                              Key.Digit7, Key.Digit8, Key.Digit9, Key.Digit0 }; // store keypressed to corresponding hotbar slot
 
     // UI
-    public GameObject hotbarPanel;
+    public RectTransform hotbarPanel;
 
     // public GameObject slotIcon;
     [SerializeField] private GameObject hotbarSlotPrefab;

@@ -51,6 +51,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
 
         // UI to place order active
         PickupCounterUIParent.SetActive(true);
+        PickupCounterUI.Instance.SetButtonsActive();
         CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
         canDragIcons = true;
@@ -69,6 +70,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
 
         // set ui inactive
         PickupCounterUIParent.SetActive(false);
+        PickupCounterUI.Instance.SetButtonsInactive();
         CancelManager.Instance.cancelButton.gameObject.SetActive(false);
     }
 }

@@ -54,6 +54,9 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
         PickupCounterUI.Instance.SetButtonsActive();
         CancelManager.Instance.cancelButton.gameObject.SetActive(true);
 
+        // set state to giving order first
+        PickupCounterUI.Instance.currentState = PickupCounterUI.CounterCurrentState.GivingOrder;
+
         canDragIcons = true;
 
 

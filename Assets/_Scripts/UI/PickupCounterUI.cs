@@ -9,12 +9,13 @@ public class PickupCounterUI : MonoBehaviour, INext_Previous
 
 
     // current state of PickupCounterUI
-    public enum ItemCurrentState
+    public enum CounterCurrentState
     {
         GivingOrder, ChoosingNPC
     }
 
     public static PickupCounterUI Instance;
+    public CounterCurrentState currentState;
 
     public static event System.Action OnCounterClosed;
 
@@ -62,12 +63,18 @@ public class PickupCounterUI : MonoBehaviour, INext_Previous
     // if choosing npc go back to choosing order
     public void Previous()
     {
-        Debug.Log("Previous pressed");
+        if (currentState != CounterCurrentState.GivingOrder)
+            Debug.Log("Previous pressed");
+        else
+            Debug.Log("Cannot go back right now.");
     }
 
     // if choosing order go to choose npc
     public void Next()
     {
-        Debug.Log("Next pressed");
+        if (currentState == CounterCurrentState.GivingOrder)
+        {
+            Debug.Log("Next pressed");
+        }
     }
 }

@@ -138,5 +138,51 @@ public class OrderManager : MonoBehaviour
         System.Array values = System.Enum.GetValues(typeof(T));
         return (T)values.GetValue(UnityEngine.Random.Range(0, values.Length));
     }
+
+
+    // check order
+    public bool CheckOrder(NPC chosenNPC, Item currentOrder)
+    {
+        for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
+        {
+            Item requestedItem = CurrentOrder.requestedItems[i];
+            bool isCorrectItem = false;
+
+            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink && !CurrentOrder.requestedItemsGiven[i])
+            {
+                if (drinkOrder.cupSize == currentDrink.cupSize
+                && drinkOrder.temperature == currentDrink.temperature
+                && drinkOrder.milkType == currentDrink.milkType
+                && drinkOrder.iceLevel == currentDrink.iceLevel
+                && drinkOrder.waterFilled == currentDrink.waterFilled)
+                {
+                    isCorrectItem = true;
+                    CurrentOrder.requestedItemsGiven[i] = isCorrectItem;
+                    HotbarManager.Instance.RemoveFromHotbar();
+                }
+            }
+
+            if (requestedItem is Food foodOrder && currentOrder is Food currentFood && !CurrentOrder.requestedItemsGiven[i])
+            {
+                if (foodOrder.pastryType == currentFood.pastryType)
+                {
+                    isCorrectItem = true;
+                    CurrentOrder.requestedItemsGiven[i] = isCorrectItem;
+                    HotbarManager.Instance.RemoveFromHotbar();
+                }
+                // add savory later
+            }
+        }
+
+        // check if all incdices are true for requestedItemsGiven list
+        bool allTrue = CurrentOrder.requestedItemsGiven.All(x => x);
+
+        if (allTrue)
+            Debug.Log("Correct");
+        else
+            Debug.Log("Incorrect");
+
+        return allTrue;
+    }
 }
 

@@ -134,7 +134,7 @@ public class NPC : MonoBehaviour, IInteractable
 
 
     /*/ check if order is correct
-    private bool CheckOrder(Item currentOrder)
+    public bool CheckOrder(Item currentOrder)
     {
         for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
         {
@@ -169,6 +169,12 @@ public class NPC : MonoBehaviour, IInteractable
 
         // check if all incdices are true for requestedItemsGiven list
         bool allTrue = CurrentOrder.requestedItemsGiven.All(x => x);
+
+        if (allTrue)
+            Debug.Log("Correct");
+        else
+            Debug.Log("Incorrect");
+
         return allTrue;
     } */
 

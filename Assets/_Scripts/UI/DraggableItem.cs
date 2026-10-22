@@ -28,8 +28,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private bool handled;  // store if the item has been handled by a drop slot
 
     // call event when counter ui is closed
-    void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
-    void OnDisable() { PickupCounterUI.OnCounterClosed -= ResetState; }
+    void OnEnable() { PickupCounter.OnCounterClosed += ResetState; }
+    void OnDisable() { PickupCounter.OnCounterClosed -= ResetState; }
 
     void Awake()
     {

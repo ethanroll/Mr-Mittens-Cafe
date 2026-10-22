@@ -14,8 +14,8 @@ public class DropSlot : MonoBehaviour, IDropHandler
 
 
     // call event when counter ui is closed
-    void OnEnable() { PickupCounterUI.OnCounterClosed += ResetState; }
-    void OnDisable() { PickupCounterUI.OnCounterClosed -= ResetState; }
+    void OnEnable() { PickupCounter.OnCounterClosed += ResetState; }
+    void OnDisable() { PickupCounter.OnCounterClosed -= ResetState; }
 
     void Awake()
     {

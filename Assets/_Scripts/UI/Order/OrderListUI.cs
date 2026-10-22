@@ -85,8 +85,7 @@ public class OrderListUI : MonoBehaviour, ICancellable
                     }
                 }
 
-                // print order 
-                // instantiate the text box prefab
+                // print order & instantiate the text box prefab
                 TextMeshProUGUI newTextBox = Instantiate(orderTextPrefab);
                 newTextBox.transform.SetParent(orderTextPrefabParent, false);
 

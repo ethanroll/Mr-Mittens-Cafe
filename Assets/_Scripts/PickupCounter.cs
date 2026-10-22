@@ -1,17 +1,34 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
-{
+
+public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_Previous
+{    
     public static PickupCounter Instance;
+
+    // current state of PickupCounterUI
+    public enum CounterCurrentState
+    {
+        GivingOrder, ChoosingNPC
+    }
+    public CounterCurrentState currentState;
+
+    public static event System.Action OnCounterClosed;
 
     [SerializeField] private GameObject PickupCounterUIParent;
     [SerializeField] private GameObject DragAndDropArea;
     [SerializeField] private GameObject dropSlotPrefab;
     [SerializeField] private GameObject FinishButton;
 
-    // public List<DropSlot> dropSlotArr = new List<DropSlot>();
+    [SerializeField] private GameObject buttonParent;
+    /*[SerializeField] private GameObject previousButton;
+    [SerializeField] private GameObject nextButton; */
 
+    [SerializeField] private GameObject npcList;
+
+    // public List<DropSlot> dropSlotArr = new List<DropSlot>();
     public bool canDragIcons = false;
     public bool isOrderComplete = false;
 
@@ -20,6 +37,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
         Instance = this;
     }
 
+
     void Start()
     {
         // instantiate 3 drop slots
@@ -27,9 +45,18 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
         {
             GameObject dropSlot = Instantiate(dropSlotPrefab, DragAndDropArea.transform);
 
-            // give reference to drop slot index
-            // dropSlotArr.Add(dropSlot);
             dropSlot.GetComponent<DropSlot>().dropSlotIndex = i;
+        }
+    }
+
+
+    public void PickupCounterUICancel()
+    {
+        // reset values if user cancel order before completing
+        if (!isOrderComplete)
+        {
+            // fire event when close
+            OnCounterClosed?.Invoke();
         }
     }
 
@@ -50,12 +77,10 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
         CancelManager.Instance.SetCancellable(this);
 
         // UI to place order active
-        PickupCounterUIParent.SetActive(true);
-        PickupCounterUI.Instance.SetButtonsActive();
-        CancelManager.Instance.cancelButton.gameObject.SetActive(true);
-
+        SetUIActive();
+        
         // set state to giving order first
-        PickupCounterUI.Instance.currentState = PickupCounterUI.CounterCurrentState.GivingOrder;
+        currentState = CounterCurrentState.GivingOrder;
 
         canDragIcons = true;
 
@@ -66,14 +91,78 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable
         // get order
     }
 
+
+    // set buttons active
+    public void SetUIActive()
+    {
+        PickupCounterUIParent.SetActive(true);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(true);
+
+        Next_PreviousManager.Instance.SetCurrent(this);    // give ref to itself
+        buttonParent.SetActive(true);
+    }
+
+
+    // set buttons inactive
+    public void SetUIInactive()
+    {
+        Next_PreviousManager.Instance.SetCurrent(null);  // remove ref
+
+        PickupCounterUIParent.SetActive(false);
+
+        if (currentState == CounterCurrentState.ChoosingNPC)
+        {
+            HUDManager.Instance.SetHUDVisible(true);
+            npcList.SetActive(false);
+        }
+
+        buttonParent.SetActive(false);
+        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
+    }
+
+    
+    // if choosing npc go back to choosing order
+    public void Previous()
+    {
+        if (currentState == CounterCurrentState.ChoosingNPC)
+        {
+            PickupCounterUIParent.SetActive(true);
+            HUDManager.Instance.SetHUDVisible(true);
+            npcList.SetActive(false);
+
+            currentState = CounterCurrentState.GivingOrder;
+            Debug.Log("Previous pressed");
+        }
+        else
+        {
+            Debug.Log("Cannot go back right now.");
+        }
+    }
+
+    // if choosing order go to choose npc
+    public void Next()
+    {
+        if (currentState == CounterCurrentState.GivingOrder)
+        {
+            HUDManager.Instance.SetHUDVisible(false);
+            PickupCounterUIParent.SetActive(false);
+            npcList.SetActive(true);
+            NPCListUI.Instance.PrintAllActiveNPCS();
+
+            currentState = CounterCurrentState.ChoosingNPC;
+            Debug.Log("Next pressed");
+        }
+        else
+        {
+            Debug.Log("Cannot go back right now.");
+        }
+    }
+
+
     // call cancel for UI
     public void Cancel()
     {
-        PickupCounterUI.Instance.PickupCounterUICancel();
-
-        // set ui inactive
-        PickupCounterUIParent.SetActive(false);
-        PickupCounterUI.Instance.SetButtonsInactive();
-        CancelManager.Instance.cancelButton.gameObject.SetActive(false);
+        PickupCounterUICancel();
+        SetUIInactive();
     }
 }

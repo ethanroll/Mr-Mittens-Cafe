@@ -13,6 +13,7 @@ public class NPCListUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI npcTextPrefab;
     [SerializeField] private ScrollRect npcScrollRect;
 
+    private NPC currentNPC;
 
     void Awake()
     {
@@ -33,8 +34,55 @@ public class NPCListUI : MonoBehaviour
         // print each active npc
         if (NPC_Manager.Instance.activeNPCs.Count != 0)
         {
+            for (int i = 0; i < NPC_Manager.Instance.activeNPCs.Count; i++)
+            {
+                currentNPC = NPC_Manager.Instance.activeNPCs[i];
 
+                // only show NPCs whose order has actually been taken
+                if (!currentNPC.orderGiven)
+                {
+                    continue;
+                }
+
+                // check if any orders were taken yet
+                if (currentNPC.CurrentOrder == null)
+                {
+                    // newTextBox.text = "No orders yet.";
+                    continue;
+                }
+
+
+                sb.AppendLine($"NPC number: {currentNPC.NPC_Number}:");
+
+                // print npc & instantiate the text box prefab
+                TextMeshProUGUI newTextBox = Instantiate(npcTextPrefab, npcTextPrefabParent, false);
+                newTextBox.text = sb.ToString();
+                sb.Clear();
+
+                // make it clickable
+                NPC chosen = currentNPC;
+                newTextBox.GetComponent<Button>().onClick.AddListener(() => OnNPCListUIButtonPressed(chosen));
+            }
+            // Canvas.ForceUpdateCanvases();
         }
     }
-    // print all npcs
+
+
+    public void OnNPCListUIButtonPressed(NPC npc)
+    {
+        Debug.Log($"Chosen npc: {npc.NPC_Number}");
+
+        // have npc walk over
+
+
+        // npc stop at counter
+
+
+        // check order
+        // npc.CheckOrder();
+
+
+
+
+    }
 }

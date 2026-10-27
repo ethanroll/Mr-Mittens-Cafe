@@ -141,14 +141,14 @@ public class OrderManager : MonoBehaviour
 
 
     // check order
-    public bool CheckOrder(NPC chosenNPC, Item currentOrder)
+    public bool CheckOrder(NPC chosenNPC,Order CurrentOrder, Item currentItem)
     {
         for (int i = 0; i < CurrentOrder.requestedItems.Count; i++)
         {
             Item requestedItem = CurrentOrder.requestedItems[i];
             bool isCorrectItem = false;
 
-            if (requestedItem is Drink drinkOrder && currentOrder is Drink currentDrink && !CurrentOrder.requestedItemsGiven[i])
+            if (requestedItem is Drink drinkOrder && currentItem is Drink currentDrink && !CurrentOrder.requestedItemsGiven[i])
             {
                 if (drinkOrder.cupSize == currentDrink.cupSize
                 && drinkOrder.temperature == currentDrink.temperature
@@ -162,7 +162,7 @@ public class OrderManager : MonoBehaviour
                 }
             }
 
-            if (requestedItem is Food foodOrder && currentOrder is Food currentFood && !CurrentOrder.requestedItemsGiven[i])
+            if (requestedItem is Food foodOrder && currentItem is Food currentFood && !CurrentOrder.requestedItemsGiven[i])
             {
                 if (foodOrder.pastryType == currentFood.pastryType)
                 {

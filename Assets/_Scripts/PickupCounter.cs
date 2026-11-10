@@ -32,6 +32,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
     public bool canDragIcons = false;
     public bool isOrderComplete = false;
 
+
     void Awake()
     {
         Instance = this;
@@ -156,6 +157,14 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
         {
             Debug.Log("Cannot go back right now.");
         }
+    }
+
+    // finish order
+    public void Finish()
+    {
+                DropSlotReader.Instance.GetItemsInDropSlots();
+        DropSlotReader.Instance.LogItemsInDropSlots();
+        Debug.Log("Finished");
     }
 
 

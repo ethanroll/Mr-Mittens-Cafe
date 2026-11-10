@@ -16,6 +16,7 @@ public class Next_PreviousManager : MonoBehaviour
 
     public void PreviousPressed() => current?.Previous();
     public void NextPressed() => current?.Next();
+    public void FinishPressed() => current?.Finish();
 
 
     // call for previous
@@ -27,11 +28,21 @@ public class Next_PreviousManager : MonoBehaviour
         }
     }
 
+    // call for next
     public void OnNext(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             current?.Next();
+        }
+    }
+
+    // call for finish
+    public void OnFinish(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            current?.Finish();
         }
     }
 }

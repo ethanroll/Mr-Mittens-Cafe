@@ -13,7 +13,7 @@ public class NPCListUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI npcTextPrefab;
     [SerializeField] private ScrollRect npcScrollRect;
 
-    private NPC currentNPC;
+    private NPC chosenNPC;
 
     void Awake()
     {
@@ -36,7 +36,7 @@ public class NPCListUI : MonoBehaviour
         {
             for (int i = 0; i < NPC_Manager.Instance.activeNPCs.Count; i++)
             {
-                currentNPC = NPC_Manager.Instance.activeNPCs[i];
+                NPC currentNPC = NPC_Manager.Instance.activeNPCs[i];
 
                 // only show NPCs whose order has actually been taken
                 if (!currentNPC.orderGiven)
@@ -70,6 +70,7 @@ public class NPCListUI : MonoBehaviour
 
     public void OnNPCListUIButtonPressed(NPC npc)
     {
+        chosenNPC = npc;
         Debug.Log($"Chosen npc: {npc.NPC_Number}");
 
         // have npc walk over

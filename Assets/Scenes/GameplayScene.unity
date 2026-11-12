@@ -4919,6 +4919,7 @@ GameObject:
   - component: {fileID: 1153850260}
   - component: {fileID: 1153850261}
   - component: {fileID: 1153850262}
+  - component: {fileID: 1153850263}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -5233,6 +5234,19 @@ MonoBehaviour:
   npcTextPrefabParent: {fileID: 1193985147}
   npcTextPrefab: {fileID: 241714699580821714, guid: df4db5a2dfbcb6d419feadca3c2442c1, type: 3}
   npcScrollRect: {fileID: 1612902028}
+  chosenNPC: {fileID: 0}
+--- !u!114 &1153850263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153850241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39a6db6de1ce5845bbdab66fbbf6fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropSlotReader
 --- !u!1 &1179536660
 GameObject:
   m_ObjectHideFlags: 0
@@ -8138,6 +8152,7 @@ GameObject:
   - component: {fileID: 1742769556}
   - component: {fileID: 1742769559}
   - component: {fileID: 1742769558}
+  - component: {fileID: 1742769560}
   m_Layer: 5
   m_Name: PickupCounterUI
   m_TagString: Untagged
@@ -8203,6 +8218,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1742769555}
   m_CullTransparentMesh: 1
+--- !u!114 &1742769560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742769555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39a6db6de1ce5845bbdab66fbbf6fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropSlotReader
 --- !u!1 &1753348288
 GameObject:
   m_ObjectHideFlags: 0

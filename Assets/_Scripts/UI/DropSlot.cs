@@ -23,6 +23,12 @@ public class DropSlot : MonoBehaviour, IDropHandler
     }
 
 
+    void Start()
+    {
+        DropSlotReader.Instance.Register(this);
+    }
+
+
     // drop onto drop slot
     public void OnDrop(PointerEventData eventData)
     {
@@ -73,5 +79,11 @@ public class DropSlot : MonoBehaviour, IDropHandler
             Debug.Log("Slot " + gameObject.name + " item: " + HotbarManager.Instance.GetCurrentItemName(slotItemHeld));
         else
             Debug.Log("Slot empty.");
+    }
+    
+    void OnDestroy()
+    {
+        if (DropSlotReader.Instance != null)
+            DropSlotReader.Instance.dropSlots.Remove(this);
     }
 }

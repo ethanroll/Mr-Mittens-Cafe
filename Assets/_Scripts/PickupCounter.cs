@@ -28,7 +28,6 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
 
     [SerializeField] private GameObject npcList;
 
-    // public List<DropSlot> dropSlotArr = new List<DropSlot>();
     public bool canDragIcons = false;
     public bool isOrderComplete = false;
 
@@ -45,6 +44,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
         for (int i = 0; i < 3; i++)
         {
             GameObject dropSlot = Instantiate(dropSlotPrefab, DragAndDropArea.transform);
+            DropSlotReader.Instance.dropSlots.Add(dropSlot.GetComponent<DropSlot>());   // store in list
 
             dropSlot.GetComponent<DropSlot>().dropSlotIndex = i;
         }
@@ -162,8 +162,16 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
     // finish order
     public void Finish()
     {
-                DropSlotReader.Instance.GetItemsInDropSlots();
-        DropSlotReader.Instance.LogItemsInDropSlots();
+        // check order
+        if (DropSlotReader.Instance.CheckItems(NPCListUI.Instance.chosenNPC) == true)
+        {
+            Debug.Log("Correct order given.");
+        }
+        else
+        {
+            Debug.Log("Incorrect order given.");
+        }
+
         Debug.Log("Finished");
     }
 

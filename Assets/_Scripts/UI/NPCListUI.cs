@@ -13,7 +13,7 @@ public class NPCListUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI npcTextPrefab;
     [SerializeField] private ScrollRect npcScrollRect;
 
-    private NPC chosenNPC;
+    public NPC chosenNPC;
 
     void Awake()
     {
@@ -79,8 +79,6 @@ public class NPCListUI : MonoBehaviour
         // npc stop at counter
 
 
-        // check order
-        // npc.CheckOrder();
 
 
 

@@ -198,4 +198,21 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             currentItem = null; 
         }
     }
+
+    public void ClearCompletedOrder()
+    {
+        if (currentDropSlot != null && currentDropSlot.heldIcon == this)
+            currentDropSlot.ResetState();
+
+        if (HotbarManager.Instance != null)
+            HotbarManager.Instance.hotbar[slotIndex] = null;
+
+        currentDropSlot = null;
+        currentItem = null;
+        currentState = ItemCurrentState.InHotbar;
+        handled = true;
+
+        // Remove the consumed icon from the UI.
+        gameObject.SetActive(false);
+    }
 }

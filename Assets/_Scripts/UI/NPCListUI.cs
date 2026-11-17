@@ -78,10 +78,5 @@ public class NPCListUI : MonoBehaviour
 
         // npc stop at counter
 
-
-
-
-
-
     }
 }

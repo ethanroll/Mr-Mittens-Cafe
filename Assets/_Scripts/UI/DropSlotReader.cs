@@ -52,7 +52,9 @@ public class DropSlotReader : MonoBehaviour
         if (a is Drink da && b is Drink db)
         {
             return da.cupSize == db.cupSize
+                && da.drinkType == db.drinkType
                 && da.temperature == db.temperature
+                && da.numEspressoShots == db.numEspressoShots
                 && da.milkType == db.milkType
                 && da.iceLevel == db.iceLevel
                 && da.waterFilled == db.waterFilled;
@@ -81,5 +83,21 @@ public class DropSlotReader : MonoBehaviour
         }
 
         return remaining.Count == 0;       // everything ordered was provided
+    }
+
+    public void ClearCompletedOrder()
+    {
+        foreach (DropSlot slot in dropSlots)
+        {
+            if (slot == null)
+                continue;
+
+            DraggableItem icon = slot.heldIcon;
+
+            slot.ResetState();
+
+            if (icon != null)
+                icon.ClearCompletedOrder();
+        }
     }
 }

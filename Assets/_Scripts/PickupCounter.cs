@@ -11,7 +11,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
     // current state of PickupCounterUI
     public enum CounterCurrentState
     {
-        GivingOrder, ChoosingNPC
+        Inactive, GivingOrder, ChoosingNPC
     }
     public CounterCurrentState currentState;
 
@@ -31,6 +31,7 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
     public bool canDragIcons = false;
     public bool isOrderComplete = false;
 
+    public bool orderCorrect = false;
 
     void Awake()
     {
@@ -162,10 +163,12 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
     // finish order
     public void Finish()
     {
-        // check order
-        if (DropSlotReader.Instance.CheckItems(NPCListUI.Instance.chosenNPC) == true)
+        if (DropSlotReader.Instance.CheckItems(NPCListUI.Instance.chosenNPC))
         {
             Debug.Log("Correct order given.");
+
+            isOrderComplete = true;
+            DropSlotReader.Instance.ClearCompletedOrder();
         }
         else
         {
@@ -173,12 +176,21 @@ public class PickupCounter : MonoBehaviour, IInteractable, ICancellable, INext_P
         }
 
         Debug.Log("Finished");
+        Cancel();
     }
 
 
     // call cancel for UI
     public void Cancel()
     {
+        // remove saved drop slot items when state == choosingNPC
+        if (currentState == CounterCurrentState.ChoosingNPC)
+        {
+            npcList.SetActive(false);
+            PickupCounterUIParent.SetActive(true);
+            HUDManager.Instance.SetHUDVisible(true);
+            currentState = CounterCurrentState.Inactive;
+        }
         PickupCounterUICancel();
         SetUIInactive();
     }
